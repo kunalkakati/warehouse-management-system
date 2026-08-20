@@ -1,1 +1,1 @@
-export * from "./test-sechema";
+export * from "./auth-schema";
