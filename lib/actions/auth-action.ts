@@ -2,7 +2,17 @@
 
 import { redirect } from "next/navigation";
 
-export async function loginAction(formData: FormData) {
+export type FormState = {
+  status: "idle" | "success" | "error"; // Strict literal types
+  message: string;
+  errors?: Record<string, string[]>;
+  timestamp: number;
+};
+
+export async function loginAction(
+  prevState: FormState,
+  formData: FormData,
+): Promise<FormState> {
   const username = formData.get("username") as string;
   const password = formData.get("password") as string;
   const role = formData.get("role") as string;
@@ -10,7 +20,12 @@ export async function loginAction(formData: FormData) {
   console.log("Username:", username);
   console.log("Password:", password);
   console.log("Role:", role);
-  redirect("/");
+
+  return {
+    status: "success",
+    message: `Hi ${username}, you have successfully logged in as ${role}.`,
+    timestamp: Date.now(),
+  };
 }
 
 export async function registerAction(formData: FormData) {

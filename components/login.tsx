@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -14,16 +16,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { loginAction } from "@/lib/actions/auth-action";
+import { loginAction, type FormState } from "@/lib/actions/auth-action";
+import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
+
+const initialState: FormState = {
+  status: "idle",
+  message: "",
+  timestamp: 0,
+};
 
 export default function Login() {
+  const [state, formAction, isPending] = useActionState(
+    loginAction,
+    initialState,
+  );
+
+  useEffect(() => {
+    if (state.status === "success") {
+      toast.success(state.message);
+    } else if (state.status === "error") {
+      toast.error(state.message);
+    }
+  }, [state.timestamp, state.status, state.message]);
   const roles = [
     { label: "Admin", value: "ADMIN" },
     { label: "Manager", value: "MANAGER" },
     { label: "Employee", value: "EMPLOYEE" },
   ];
   return (
-    <form action={loginAction}>
+    <form action={formAction}>
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="fieldgroup-name">Username</FieldLabel>
@@ -69,7 +91,9 @@ export default function Login() {
           <Button type="reset" variant="outline">
             Reset
           </Button>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">
+            {isPending ? "Submitting..." : "Submit"}
+          </Button>
         </Field>
       </FieldGroup>
     </form>
