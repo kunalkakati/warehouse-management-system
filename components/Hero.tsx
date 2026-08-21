@@ -1,20 +1,22 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+const { data: session } = await authClient.getSession();
+
 const Hero = () => {
-  const showToast = () => {
-    console.log("Toast button clicked");
-    // Display a toast notification
-    toast.success("This is a success message!");
-  };
+  const router = useRouter();
+  if (session) {
+    router.push("/dashboard");
+  }
   return (
     <div>
       <h1>Hero Page</h1>
+      <p>{`Hello ${session?.user.name}`}</p>
       <h6>This is Hero page, a generic site which everyone can visit</h6>
       <Link href="/auth/login">Official Login</Link>
       <Link href="/auth/register">Register</Link>
-      <button onClick={showToast}>Toast</button>
     </div>
   );
 };
