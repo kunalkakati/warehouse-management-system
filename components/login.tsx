@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -8,35 +7,46 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-
-import { loginAction } from "@/lib/actions/auth-action";
-import { useActionState, useEffect } from "react";
+import { useState } from "react";
+import { userLoginSchema } from "@/lib/zod/zod.user";
+import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { type FormState } from "@/types/type";
-
-export const initialState: FormState = {
-  status: "idle",
-  message: "",
-  timestamp: 0,
-};
+import { useRouter } from "next/navigation";
 
 export default function Login() {
-  const [state, formAction, isPending] = useActionState(
-    loginAction,
-    initialState,
-  );
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const payload = {
+      email,
+      password,
+    };
+    // data validation(zod)
+    const validate = userLoginSchema.safeParse(payload);
 
-  useEffect(() => {
-    if (state.status === "success") {
-      toast.success(state.message);
-      // TODO: Redirect to dashboard or home page after successful login
-    } else if (state.status === "error") {
-      toast.error(state.message);
+    if (validate.success) {
+      // console.log("Data validated", validate.data)
+      try {
+        await authClient.signIn.email({
+          email: validate.data.email, // required
+          password: validate.data.password, // required
+          rememberMe: true,
+        });
+      } catch (error) {
+        toast.error(`Something went wrong! please try again`);
+        console.error("Error while log-in: ", error);
+      }
+      toast.success("Log in success");
+      router.push("/dashboard");
+    } else {
+      console.log("Data validation Failed", validate.error);
+      toast.error(`Check your credential: ${validate.error.issues[0].message}`);
     }
-  }, [state.timestamp, state.status, state.message]);
-
+  };
   return (
-    <form action={formAction}>
+    <form onSubmit={handleLogin}>
       <FieldGroup>
         {/* email */}
         <Field>
@@ -46,6 +56,8 @@ export default function Login() {
             type="email"
             name="email"
             placeholder="your_email@example.com"
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
             autoComplete="email"
             required
           />
@@ -58,6 +70,8 @@ export default function Login() {
             type="password"
             name="password"
             placeholder="Enter your password"
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
             autoComplete="password"
             required
           />
@@ -71,9 +85,7 @@ export default function Login() {
           <Button type="reset" variant="outline">
             Reset
           </Button>
-          <Button type="submit" disabled={isPending}>
-            {isPending ? "Submitting..." : "Submit"}
-          </Button>
+          <Button type="submit">submit</Button>
         </Field>
       </FieldGroup>
     </form>
