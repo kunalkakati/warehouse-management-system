@@ -12,12 +12,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { createEmployeeAccount } from "@/lib/actions/auth-action"; // Adjust path as needed
-
 export default function Registration() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
+    role: "",
     employeeId: "",
     officeAddress: "",
   });
@@ -27,7 +27,9 @@ export default function Registration() {
     password: string;
   } | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -66,6 +68,7 @@ export default function Registration() {
       name: "",
       email: "",
       password: "",
+      role: "",
       employeeId: "",
       officeAddress: "",
     });
@@ -147,6 +150,27 @@ export default function Registration() {
             />
           </Field>
 
+          {/* Role */}
+          <Field>
+            <FieldLabel htmlFor="role">Role</FieldLabel>
+            <select
+              id="role"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              required
+              disabled={isSubmitting}
+              className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <option value="" disabled>
+                Select a role
+              </option>
+              <option value="user">warehouse Operator</option>
+              <option value="manager">Manager</option>
+              <option value="admin">Admin</option>
+            </select>
+          </Field>
+
           <Field orientation="horizontal">
             {/* Type button to prevent form submission, clears state manually */}
             <Button
@@ -158,6 +182,7 @@ export default function Registration() {
                   name: "",
                   email: "",
                   password: "",
+                  role: "",
                   employeeId: "",
                   officeAddress: "",
                 })

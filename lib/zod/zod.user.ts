@@ -25,6 +25,9 @@ export const userRagistrationSchema = z.object({
     .string()
     .min(1, { message: "Office address can not be empty" }),
   employeeId: z.string().length(8, "Employee Id should be exacly 8 character"),
+  role: z.enum(["user", "manager", "admin"], {
+    message: "Please select a valid role",
+  }),
   password: z
     .string()
     .min(8, { message: "Password should atleast 8 character long" })

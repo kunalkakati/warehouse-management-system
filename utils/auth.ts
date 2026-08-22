@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/lib/db"; // your drizzle instance
 import * as schema from "@/models/schema"; // your drizzle schema
+import { admin } from "better-auth/plugins";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -11,14 +12,10 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  plugins: [admin()],
   //Security
   user: {
     additionalFields: {
-      role: {
-        type: "string",
-        required: false,
-        input: false, // did this so that the role is not settable by the user during registration
-      },
       employeeId: {
         type: "string",
         required: true,
