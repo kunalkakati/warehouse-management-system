@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- Deep space/dark mode rounded background -->
+  <rect width="256" height="256" rx="56" fill="#020817" />
+  
+  <!-- Isometric Warehouse Box -->
+  <!-- Top Face (Vibrant Blue) -->
+  <path d="M 128 50 L 200 90 L 128 130 L 56 90 Z" fill="#3b82f6" />
+  
+  <!-- Left Face (Darkest Blue) -->
+  <path d="M 56 90 L 128 130 L 128 210 L 56 170 Z" fill="#1e3a8a" />
+  
+  <!-- Right Face (Medium Blue) -->
+  <path d="M 200 90 L 128 130 L 128 210 L 200 170 Z" fill="#1d4ed8" />
+  
+  <!-- The 3 Stars of the Orion Belt perfectly aligned on the right panel -->
+  <circle cx="144" cy="130" r="8" fill="#a5f3fc" />
+  <circle cx="164" cy="150" r="8" fill="#67e8f9" />
+  <circle cx="184" cy="170" r="8" fill="#22d3ee" />
+</svg>

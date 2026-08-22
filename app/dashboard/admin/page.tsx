@@ -1,12 +1,11 @@
 import Link from "next/link";
 import React from "react";
-import Logout from "@/components/Logout";
+
 const page = () => {
   return (
     <div>
       This is Admin Page
       <Link href="/dashboard/admin/register">Register a new User</Link>
-      <Logout />
     </div>
   );
 };

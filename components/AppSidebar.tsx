@@ -31,7 +31,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+import Image from "next/image";
 
+// Keeping arrays outside the component prevents memory reallocation on route changes
 const mainItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Admin", url: "/dashboard/admin", icon: Shield },
@@ -46,20 +49,44 @@ export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
+  const logOut = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/auth/login"); // redirect to login page
+        },
+      },
+    });
+  };
+
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader>
+    <Sidebar
+      collapsible="icon"
+      // Added modern transparent background with a subtle backdrop blur
+      className="border-r border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+    >
+      <SidebarHeader className="py-4">
         <SidebarMenu>
           <SidebarMenuItem>
-            {/* Replaced aschild with render prop */}
-            <SidebarMenuButton size="lg" render={<Link href="/dashboard" />}>
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <Store className="size-4" />
+            <SidebarMenuButton
+              size="lg"
+              // prefetch={false} optimizes network load on dashboard mount
+              render={<Link href="/dashboard" prefetch={false} />}
+              className="group transition-all duration-200 hover:bg-transparent"
+            >
+              <div className="flex aspect-square size-8 items-center justify-center rounded-xl shadow-sm group-hover:shadow-md transition-all duration-200 overflow-hidden">
+                <Image
+                  src="/icon.svg"
+                  width={32}
+                  height={32}
+                  alt="Orion WMS Logo"
+                  className="size-full object-cover"
+                />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">My Store</span>
-                <span className="truncate text-xs text-muted-foreground">
-                  Inventory System
+                <span className="truncate font-bold tracking-tight">WMS</span>
+                <span className="truncate text-xs font-medium text-muted-foreground/80">
+                  Warehouse Management System
                 </span>
               </div>
             </SidebarMenuButton>
@@ -67,63 +94,98 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="gap-2 px-2">
         <SidebarGroup>
-          <SidebarGroupLabel>General</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+            General
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {mainItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  {/* Replaced aschild with render prop */}
-                  <SidebarMenuButton
-                    isActive={pathname === item.url}
-                    render={<Link href={item.url} />}
-                  >
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+            <SidebarMenu className="gap-1">
+              {mainItems.map((item) => {
+                const isActive = pathname === item.url;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      isActive={isActive}
+                      render={
+                        <Link
+                          href={item.url}
+                          prefetch={false}
+                          // aria-disabled={isActive}
+                          tabIndex={isActive ? -1 : undefined}
+                        />
+                      }
+                      className={`group rounded-lg transition-all duration-200 ${
+                        isActive
+                          ? "text-muted-foreground bg-accent-foreground font-medium pointer-events-none"
+                          : "hover:bg-muted text-foreground hover:text-muted-foreground"
+                      }`}
+                    >
+                      <item.icon
+                        className={`size-4 transition-transform duration-200 ${isActive ? "scale-110" : "group-hover:scale-110"}`}
+                      />
+                      <span>{item.title}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Inventory</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+            Inventory
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {inventoryItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  {/* Replaced aschild with render prop */}
-                  <SidebarMenuButton
-                    isActive={pathname === item.url}
-                    render={<Link href={item.url} />}
-                  >
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+            <SidebarMenu className="gap-1">
+              {inventoryItems.map((item) => {
+                const isActive = pathname === item.url;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      isActive={isActive}
+                      render={
+                        <Link
+                          href={item.url}
+                          prefetch={false}
+                          aria-disabled={isActive}
+                          tabIndex={isActive ? -1 : undefined}
+                        />
+                      }
+                      className={`group rounded-lg transition-all duration-200 ${
+                        isActive
+                          ? "bg-primary/10 text-primary font-medium pointer-events-none"
+                          : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      <item.icon
+                        className={`size-4 transition-transform duration-200 ${isActive ? "scale-110" : "group-hover:scale-110"}`}
+                      />
+                      <span>{item.title}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter>
+      <SidebarFooter className="py-4">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
-              {/* Replaced aschild with render prop containing the SidebarMenuButton */}
               <DropdownMenuTrigger
                 render={
                   <SidebarMenuButton
                     size="lg"
-                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                    className="group data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground rounded-xl transition-all duration-200 hover:bg-muted"
                   />
                 }
               >
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-muted">
-                  <Settings className="size-4" />
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 border shadow-sm">
+                  <Settings className="size-4 text-slate-600 dark:text-slate-300 group-hover:rotate-45 transition-transform duration-300" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">Admin User</span>
@@ -131,17 +193,27 @@ export function AppSidebar() {
                     admin@store.com
                   </span>
                 </div>
-                <ChevronsUpDown className="ml-auto size-4" />
+                <ChevronsUpDown className="ml-auto size-4 text-muted-foreground/50 group-hover:text-foreground transition-colors" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" side="right" align="end">
-                <DropdownMenuItem onSelect={() => router.push("/settings")}>
-                  <Settings className="mr-2 size-4" />
+              <DropdownMenuContent
+                className="w-56 rounded-xl shadow-lg border-border/50 backdrop-blur-md"
+                side="right"
+                align="end"
+              >
+                <DropdownMenuItem
+                  onSelect={() => router.push("/settings")}
+                  className="cursor-pointer rounded-lg hover:bg-primary/5 focus:bg-primary/5"
+                >
+                  <Settings className="mr-2 size-4 text-muted-foreground" />
                   Settings
                 </DropdownMenuItem>
 
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => logOut()}
+                  className="cursor-pointer rounded-lg text-rose-500 hover:bg-rose-50 hover:text-rose-600 focus:bg-rose-50 focus:text-rose-600 dark:hover:bg-rose-950/50 dark:focus:bg-rose-950/50 mt-1"
+                >
                   <LogOut className="mr-2 size-4" />
-                  Log out
+                  log out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
