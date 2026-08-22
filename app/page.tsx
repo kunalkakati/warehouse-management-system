@@ -9,9 +9,7 @@ export default async function Home() {
   });
   const role = session?.user.role;
   if (role === "admin") {
-    redirect("/admin"); // Admins start here
-  } else {
-    redirect("/dashboard"); // Everyone else starts here
+    redirect("/dashboard/admin"); // Admins start here
   }
   return (
     <div>

@@ -5,7 +5,7 @@ const page = () => {
   return (
     <div>
       This is Admin Page
-      <Link href="/admin/register">Register a new User</Link>
+      <Link href="/dashboard/admin/register">Register a new User</Link>
       <Logout />
     </div>
   );

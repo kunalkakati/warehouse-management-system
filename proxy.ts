@@ -25,7 +25,7 @@ export async function proxy(request: NextRequest) {
   const role = data.user.role;
 
   // 2. Strict Admin-Only Area (/admin/*)
-  if (pathname.startsWith("/admin")) {
+  if (pathname.startsWith("/dashboard/admin")) {
     if (role !== "admin") {
       // If a regular user or manager tries to enter /admin, kick them out
       return NextResponse.redirect(new URL("/unauthorized", request.url));
@@ -49,5 +49,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/dashboard/:path*"],
+  matcher: ["/dashboard/:path*"],
 };
