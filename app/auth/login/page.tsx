@@ -1,7 +1,6 @@
 import React from "react";
 import Login from "@/components/login";
-
-const page = () => {
+const page = async () => {
   return (
     <div>
       <Login />

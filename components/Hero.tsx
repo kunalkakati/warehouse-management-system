@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "./ui/button";
 
+const { data: session } = await authClient.getSession();
 const Hero = () => {
   const router = useRouter();
 
@@ -21,7 +22,7 @@ const Hero = () => {
   return (
     <div>
       <h1>Hero Page</h1>
-      {/* <p>{`Hello ${session?.user.name}`}</p> */}
+      <p>{`Hello ${session?.user.name}`}</p>
       <h6>This is Hero page, a generic site which everyone can visit</h6>
       <Link href="/auth/login">Official Login</Link>
       <Link href="/auth/register">Register</Link>
