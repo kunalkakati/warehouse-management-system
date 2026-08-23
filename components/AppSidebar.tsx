@@ -12,7 +12,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  SidebarMenuSub,
 } from "@/components/ui/sidebar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,8 +30,8 @@ import {
   Shield,
   ListChecks,
   PackagePlus,
-  Store,
   ChevronsUpDown,
+  ChevronRight,
   LogOut,
   Settings,
 } from "lucide-react";
@@ -33,12 +39,22 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Image from "next/image";
+import { NavItem, NavSubItem } from "@/components/NavItem";
 
 // Keeping arrays outside the component prevents memory reallocation on route changes
 const mainItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Admin", url: "/dashboard/admin", icon: Shield },
   { title: "Tab Manager", url: "/dashboard/manager", icon: ListChecks },
+];
+
+const adminItems = [
+  { title: "Dashboard", url: "/dashboard/admin" },
+  { title: "Add Employee", url: "/dashboard/admin/register" },
+  { title: "Transfer Employee", url: "/dashboard/admin/employees/transfer" },
+  {
+    title: "Employee Attendance",
+    url: "/dashboard/admin/employees/attendance",
+  },
 ];
 
 const inventoryItems = [
@@ -84,7 +100,7 @@ export function AppSidebar() {
                 />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-bold tracking-tight">WMS</span>
+                <span className="truncate font-bold tracking-tight">Orion</span>
                 <span className="truncate text-xs font-medium text-muted-foreground/80">
                   Warehouse Management System
                 </span>
@@ -101,34 +117,44 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-1">
-              {mainItems.map((item) => {
-                const isActive = pathname === item.url;
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      isActive={isActive}
-                      render={
-                        <Link
-                          href={item.url}
-                          prefetch={false}
-                          // aria-disabled={isActive}
-                          tabIndex={isActive ? -1 : undefined}
-                        />
-                      }
-                      className={`group rounded-lg transition-all duration-200 ${
-                        isActive
-                          ? "text-muted-foreground bg-accent-foreground font-medium pointer-events-none"
-                          : "hover:bg-muted text-foreground hover:text-muted-foreground"
-                      }`}
-                    >
-                      <item.icon
-                        className={`size-4 transition-transform duration-200 ${isActive ? "scale-110" : "group-hover:scale-110"}`}
-                      />
-                      <span>{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              {mainItems.map((item) => (
+                <NavItem
+                  key={item.title}
+                  item={item}
+                  pathname={pathname}
+                  activeClassName="text-muted-foreground bg-accent-foreground font-medium pointer-events-none"
+                  inactiveClassName="hover:bg-muted text-foreground hover:text-muted-foreground"
+                />
+              ))}
+              <Collapsible
+                defaultOpen={pathname.startsWith("/dashboard/admin")}
+                className="group/collapsible"
+              >
+                <SidebarMenuItem>
+                  <CollapsibleTrigger
+                    render={
+                      <SidebarMenuButton className="group rounded-lg transition-all duration-200 hover:bg-muted text-foreground hover:text-muted-foreground" />
+                    }
+                  >
+                    <Shield className="size-4 transition-transform duration-200 group-hover:scale-110" />
+                    <span>Admin</span>
+                    <ChevronRight className="ml-auto size-4 text-muted-foreground/50 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      <SidebarMenuSub>
+                        {adminItems.map((item) => (
+                          <NavSubItem
+                            key={item.title}
+                            item={item}
+                            pathname={pathname}
+                          />
+                        ))}
+                      </SidebarMenuSub>
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -139,34 +165,15 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-1">
-              {inventoryItems.map((item) => {
-                const isActive = pathname === item.url;
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      isActive={isActive}
-                      render={
-                        <Link
-                          href={item.url}
-                          prefetch={false}
-                          aria-disabled={isActive}
-                          tabIndex={isActive ? -1 : undefined}
-                        />
-                      }
-                      className={`group rounded-lg transition-all duration-200 ${
-                        isActive
-                          ? "bg-primary/10 text-primary font-medium pointer-events-none"
-                          : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      <item.icon
-                        className={`size-4 transition-transform duration-200 ${isActive ? "scale-110" : "group-hover:scale-110"}`}
-                      />
-                      <span>{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              {inventoryItems.map((item) => (
+                <NavItem
+                  key={item.title}
+                  item={item}
+                  pathname={pathname}
+                  activeClassName="bg-primary/10 text-primary font-medium pointer-events-none"
+                  inactiveClassName="hover:bg-muted text-muted-foreground hover:text-foreground"
+                />
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
