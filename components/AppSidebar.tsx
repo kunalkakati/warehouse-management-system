@@ -50,7 +50,7 @@ const mainItems = [
 const adminItems = [
   { title: "Dashboard", url: "/dashboard/admin" },
   { title: "Add Employee", url: "/dashboard/admin/register" },
-  { title: "Transfer Employee", url: "/dashboard/admin/employees/transfer" },
+  { title: "Transfer Employee", url: "/dashboard/admin/transfer" },
   {
     title: "Employee Attendance",
     url: "/dashboard/admin/employees/attendance",

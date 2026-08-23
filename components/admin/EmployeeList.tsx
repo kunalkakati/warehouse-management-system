@@ -46,7 +46,7 @@ const EmployeeList = ({ data }: { data: Employee[] }) => {
       {/* Table Container */}
       <div className="w-full overflow-hidden rounded-xl border bg-white shadow-sm">
         <div className="w-full overflow-x-auto">
-          <Table className="min-w-[800px]">
+          <Table className="min-w-200">
             <TableHeader className="bg-gray-50/80">
               <TableRow>
                 <TableHead className="w-24 whitespace-nowrap">ID</TableHead>
@@ -69,8 +69,8 @@ const EmployeeList = ({ data }: { data: Employee[] }) => {
                   <TableCell className="font-medium">{d.name}</TableCell>
                   <TableCell className="text-gray-500">{d.email}</TableCell>
                   <TableCell>
-                    <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-800">
-                      {d.role}
+                    <span className="inline-flex items-center  text-xs font-medium text-slate-800">
+                      {d.role?.toLocaleUpperCase()}
                     </span>
                   </TableCell>
                   <TableCell className="text-gray-600">

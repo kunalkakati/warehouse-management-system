@@ -43,3 +43,7 @@ export const userRagistrationSchema = z.object({
       message: "Password must contain at least one special character",
     }),
 });
+
+export const employeeSearchSchema = z.object({
+  eid: z.string().length(8, "Employee Id should be exacly 8 character"),
+});
