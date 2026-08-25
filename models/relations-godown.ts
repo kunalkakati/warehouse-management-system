@@ -1,5 +1,6 @@
 import { defineRelations } from "drizzle-orm";
 import {
+  godowns,
   depositors,
   goodsInward,
   goodsOutward,
@@ -10,6 +11,7 @@ import {
 
 // 1. Group all your tables into a single schema object
 const schema = {
+  godowns,
   depositors,
   goodsInward,
   goodsOutward,
@@ -21,6 +23,9 @@ const schema = {
 // 2. Define all relations in one single export using the 'r' helper
 export const schemaRelations = defineRelations(schema, (r) => ({
   // Masters (One-to-Many side)
+  godowns: {
+    locations: r.many.godownLocations(),
+  },
   depositors: {
     inwardReceipts: r.many.goodsInward(),
     outwardDispatches: r.many.goodsOutward(),
@@ -34,6 +39,10 @@ export const schemaRelations = defineRelations(schema, (r) => ({
   },
 
   godownLocations: {
+    godown: r.one.godowns({
+      from: r.godownLocations.godownId,
+      to: r.godowns.id,
+    }),
     inwardReceipts: r.many.goodsInward(),
     outwardDispatches: r.many.goodsOutward(),
     stockHoldings: r.many.stockLedger(),

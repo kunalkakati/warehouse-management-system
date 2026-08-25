@@ -35,6 +35,21 @@ export const transactionStatusEnum = pgEnum("transaction_status", [
   "CANCELLED",
 ]);
 
+export const godowns = pgTable("godowns", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(), // e.g., "Amingaon Main Depot"
+  code: varchar("code", { length: 50 }).notNull().unique(), // e.g., "GWY-01"
+  managerName: varchar("manager_name", { length: 150 }),
+  totalCapacityMt: numeric("total_capacity_mt", { precision: 10, scale: 2 }), // Total capacity in Metric Tons
+  address: text("address"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
 // -------------------------------------------------------------
 // 1. DEPOSITORS (Who owns the stock)
 // -------------------------------------------------------------
@@ -80,7 +95,9 @@ export const commodities = pgTable("commodities", {
 // -------------------------------------------------------------
 export const godownLocations = pgTable("godown_locations", {
   id: uuid("id").defaultRandom().primaryKey(),
-  godownNumber: varchar("godown_number", { length: 50 }).notNull(), // e.g., "Godown 2A"
+  godownId: uuid("godown_id")
+    .notNull()
+    .references(() => godowns.id, { onDelete: "restrict" }), // e.g., "Godown 2A"
   stackNumber: varchar("stack_number", { length: 50 }).notNull(), // e.g., "Stack 14"
   maxCapacityBags: integer("max_capacity_bags").notNull(),
   isFumigated: timestamp("last_fumigated_at", { withTimezone: true }),
