@@ -7,6 +7,7 @@ import {
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/_relations";
+import { varchar } from "drizzle-orm/cockroach-core";
 
 // export const UserRole = pgEnum("user_role", ["user", "admin", "manager"]);
 
@@ -18,6 +19,7 @@ export const user = pgTable("user", {
   image: text("image"),
   role: text("role"),
   banned: boolean("banned"),
+  godownCode: varchar("godown_code"),
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
   officeAddress: text("office_address"),

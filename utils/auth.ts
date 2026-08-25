@@ -24,6 +24,10 @@ export const auth = betterAuth({
         type: "string",
         required: true,
       },
+      godownCode: {
+        type: "string",
+        required: true,
+      },
     },
   },
 });

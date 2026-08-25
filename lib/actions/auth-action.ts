@@ -14,13 +14,14 @@ export async function createEmployeeAccount(payload: unknown) {
     };
   }
 
-  const { name, email, password, role, employeeId, officeAddress } =
+  const { name, email, password, godownCode, role, employeeId, officeAddress } =
     validation.data;
   try {
     const response = await auth.api.signUpEmail({
       body: {
         email,
         password,
+        godownCode,
         name,
         employeeId,
         officeAddress,

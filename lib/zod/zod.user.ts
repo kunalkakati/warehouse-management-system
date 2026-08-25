@@ -28,6 +28,10 @@ export const userRagistrationSchema = z.object({
   role: z.enum(["user", "manager", "admin"], {
     message: "Please select a valid role",
   }),
+  godownCode: z
+    .string()
+    .min(3, { message: "Code Should containe at least 3 character" })
+    .max(40, { message: "Code shoud not be more then 40 character" }),
   password: z
     .string()
     .min(8, { message: "Password should atleast 8 character long" })

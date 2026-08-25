@@ -23,7 +23,7 @@ export type FormState = {
 // TYPESCRIPT TYPES (Inferred automatically by Drizzle)
 // -------------------------------------------------------------
 // 0. Godown
-export type Godown = typeof godowns.$inferSelect;
+export type GodownType = typeof godowns.$inferSelect;
 export type NewGodown = typeof godowns.$inferInsert;
 // 1. Depositors
 export type Depositor = typeof depositors.$inferSelect;

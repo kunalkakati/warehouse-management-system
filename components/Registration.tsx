@@ -33,6 +33,7 @@ export default function Registration() {
     name: "",
     email: "",
     password: "",
+    godownCode: "",
     role: "",
     employeeId: "",
     officeAddress: "",
@@ -57,6 +58,7 @@ export default function Registration() {
       name: "",
       email: "",
       password: "",
+      godownCode: "",
       role: "",
       employeeId: "",
       officeAddress: "",
@@ -100,6 +102,7 @@ export default function Registration() {
       name: "",
       email: "",
       password: "",
+      godownCode: "",
       role: "",
       employeeId: "",
       officeAddress: "",
@@ -194,7 +197,19 @@ export default function Registration() {
                     placeholder="EMP123"
                   />
                 </div>
-
+                {/* Godown Code */}
+                <div className="space-y-2">
+                  <Label htmlFor="godownCode">Godown Code</Label>
+                  <Input
+                    id="godownCode"
+                    name="godownCode"
+                    value={formData.godownCode}
+                    onChange={handleChange}
+                    required
+                    disabled={isSubmitting}
+                    placeholder="GHY-21"
+                  />
+                </div>
                 {/* Role (Shadcn Select) */}
                 <div className="space-y-2">
                   <Label htmlFor="role">Role</Label>

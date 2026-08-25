@@ -27,7 +27,7 @@ const AdminDashboard = async () => {
         <h2 className="mb-4 text-lg font-semibold tracking-tight text-gray-900">
           Quick Actions
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Link
             href="/dashboard/admin/register"
             className="group flex items-center gap-4 rounded-xl border bg-white p-4 transition-all hover:border-blue-200 hover:bg-blue-50/50 hover:shadow-sm"
@@ -36,6 +36,16 @@ const AdminDashboard = async () => {
               <UserPlus className="h-5 w-5" />
             </div>
             <span className="font-medium text-gray-700">Add Employee</span>
+          </Link>
+
+          <Link
+            href="/dashboard/admin/godown/add"
+            className="group flex items-center gap-4 rounded-xl border bg-white p-4 transition-all hover:border-blue-200 hover:bg-blue-50/50 hover:shadow-sm"
+          >
+            <div className="rounded-lg bg-blue-100 p-2 text-blue-600 transition-colors group-hover:bg-blue-200">
+              <UserPlus className="h-5 w-5" />
+            </div>
+            <span className="font-medium text-gray-700">Add new Godown</span>
           </Link>
 
           <Link
