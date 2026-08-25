@@ -8,6 +8,7 @@ import {
   timestamp,
   pgEnum,
   uniqueIndex,
+  boolean,
 } from "drizzle-orm/pg-core";
 
 // -------------------------------------------------------------
@@ -26,6 +27,7 @@ export const agencyTypeEnum = pgEnum("agency_type", [
   "PRIVATE_TRADER",
   "FARMER_COOPERATIVE",
   "CORPORATE",
+  "OTHER",
 ]);
 
 export const transactionStatusEnum = pgEnum("transaction_status", [
@@ -93,21 +95,28 @@ export const commodities = pgTable("commodities", {
 // -------------------------------------------------------------
 // 3. GODOWN LOCATIONS (Physical storage bins/stacks)
 // -------------------------------------------------------------
-export const godownLocations = pgTable("godown_locations", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  godownId: uuid("godown_id")
-    .notNull()
-    .references(() => godowns.id, { onDelete: "restrict" }), // e.g., "Godown 2A"
-  stackNumber: varchar("stack_number", { length: 50 }).notNull(), // e.g., "Stack 14"
-  maxCapacityBags: integer("max_capacity_bags").notNull(),
-  isFumigated: timestamp("last_fumigated_at", { withTimezone: true }),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-});
+export const godownLocations = pgTable(
+  "godown_locations",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    godownId: uuid("godown_id")
+      .notNull()
+      .references(() => godowns.id, { onDelete: "restrict" }), // e.g., "Godown 2A"
+    stackNumber: varchar("stack_number", { length: 50 }).notNull(), // e.g., "Stack 14"
+    maxCapacityKg: integer("max_capacity_kg").notNull(),
+    isFumigated: boolean("is_fumigated").default(false).notNull(),
+    lastFumigatedAt: timestamp("last_fumigated_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex("godown_stack_uidx").on(table.godownId, table.stackNumber),
+  ],
+);
 
 // -------------------------------------------------------------
 // 4. GOODS INWARD (Intake Transactions)

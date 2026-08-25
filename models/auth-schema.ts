@@ -7,7 +7,9 @@ import {
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/_relations";
-import { varchar } from "drizzle-orm/cockroach-core";
+import { CockroachVarcharBuilder, varchar } from "drizzle-orm/cockroach-core";
+import { godowns } from "./godown-schema";
+import { NotNull } from "drizzle-orm";
 
 // export const UserRole = pgEnum("user_role", ["user", "admin", "manager"]);
 
@@ -19,7 +21,9 @@ export const user = pgTable("user", {
   image: text("image"),
   role: text("role"),
   banned: boolean("banned"),
-  godownCode: varchar("godown_code"),
+  godownCode: varchar("godown_code")
+    .notNull()
+    .references(() => godowns.code, { onDelete: "set null" }),
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
   officeAddress: text("office_address"),
@@ -97,9 +101,13 @@ export const verification = pgTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
-export const userRelations = relations(user, ({ many }) => ({
+export const userRelations = relations(user, ({ many, one }) => ({
   sessions: many(session),
   accounts: many(account),
+  godown: one(godowns, {
+    fields: [user.godownCode],
+    references: [godowns.code],
+  }),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({

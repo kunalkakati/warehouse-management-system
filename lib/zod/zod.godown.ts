@@ -1,7 +1,13 @@
 import * as z from "zod";
 
 const UnitOfMeasureEnum = z.enum(["BAGS", "KGS", "QUINTALS", "TONNES"]);
-const AgencyTypeEnum = z.enum(["PRIVATE_TRADER", "GOVERNMENT", "OTHER"]);
+const AgencyTypeEnum = z.enum([
+  "PRIVATE_TRADER",
+  "GOVERNMENT",
+  "FARMER_COOPERATIVE",
+  "CORPORATE",
+  "OTHER",
+]);
 
 //GODOWN
 export const godownSchema = z.object({
@@ -29,7 +35,7 @@ export const godownSchema = z.object({
 });
 
 //DEPOSITOR
-export const insertDepositorSchema = z.object({
+export const DepositorSchema = z.object({
   name: z.string().min(1, "Name is required").max(255, "Name is too long"),
 
   agencyType: AgencyTypeEnum.default("OTHER"),
@@ -54,7 +60,7 @@ export const insertDepositorSchema = z.object({
 });
 
 // COMMODITY
-export const insertCommoditySchema = z.object({
+export const CommoditySchema = z.object({
   name: z.string().min(1, "Name is required").max(255),
   category: z.string().min(1, "Category is required").max(100),
   standardUnit: UnitOfMeasureEnum.default("BAGS"),
@@ -71,7 +77,7 @@ export const insertCommoditySchema = z.object({
 });
 
 //GODOWN LOCATION
-export const insertGodownLocationSchema = z.object({
+export const GodownLocationSchema = z.object({
   godownId: z.uuid("Invalid Godown ID"),
   stackNumber: z.string().min(1, "Stack number is required").max(50),
 
@@ -87,7 +93,7 @@ export const insertGodownLocationSchema = z.object({
 // 5. STOCK LEDGER
 // Note: Stock ledger is usually updated automatically via triggers or backend logic,
 // Propabily never use it.
-export const insertStockLedgerSchema = z.object({
+export const StockLedgerSchema = z.object({
   depositorId: z.uuid("Invalid Depositor ID"),
   commodityId: z.uuid("Invalid Commodity ID"),
   locationId: z.uuid("Invalid Location ID"),
@@ -103,9 +109,7 @@ export const insertStockLedgerSchema = z.object({
 
 // Types.
 export type godownSchemaType = z.infer<typeof godownSchema>;
-export type insertDepositorSchemaType = z.infer<typeof insertDepositorSchema>;
-export type InsertCommoditySchemaType = z.infer<typeof insertCommoditySchema>;
-export type InsertGodownLocationSchemaType = z.infer<
-  typeof insertGodownLocationSchema
->;
-export type InsertStockLedger = z.infer<typeof insertStockLedgerSchema>;
+export type DepositorSchemaType = z.input<typeof DepositorSchema>;
+export type CommoditySchemaType = z.infer<typeof CommoditySchema>;
+export type GodownLocationSchemaType = z.infer<typeof GodownLocationSchema>;
+export type StockLedgerType = z.infer<typeof StockLedgerSchema>;
