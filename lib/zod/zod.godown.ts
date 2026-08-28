@@ -63,7 +63,7 @@ export const DepositorSchema = z.object({
 export const CommoditySchema = z.object({
   name: z.string().min(1, "Name is required").max(255),
   category: z.string().min(1, "Category is required").max(100),
-  standardUnit: UnitOfMeasureEnum.default("BAGS"),
+  standardUnit: UnitOfMeasureEnum,
 
   // numeric(8, 2) -> max 6 digits before decimal, 2 after
   standardBagWeightKg: z

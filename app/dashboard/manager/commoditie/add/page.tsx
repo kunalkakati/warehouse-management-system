@@ -1,10 +1,10 @@
+import AddCommoditie from "@/components/manager/AddCommoditie";
 import React from "react";
-import AddDepositor from "@/components/manager/AddDepositor";
 
 const page = () => {
   return (
     <div>
-      <AddDepositor />
+      <AddCommoditie />
     </div>
   );
 };

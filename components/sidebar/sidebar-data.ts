@@ -7,8 +7,9 @@ export const mainItems = [
 
 export const managerItems = [
   { title: "Manager Dashboard", url: "/dashboard/manager" },
-  { title: "Add Depositor", url: "/dashboard/manager/depositor/add" }, // Example sub-route
-  { title: "Daily Reports", url: "/dashboard/manager/reports" }, // Example sub-route
+  { title: "Add Depositor", url: "/dashboard/manager/depositor/add" },
+  { title: "Add Commoditie", url: "/dashboard/manager/commoditie/add" },
+  { title: "Daily Reports", url: "/dashboard/manager/reports" },
 ];
 
 export const adminItems = [

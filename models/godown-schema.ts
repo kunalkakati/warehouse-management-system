@@ -16,10 +16,9 @@ import {
 // -------------------------------------------------------------
 export const unitOfMeasureEnum = pgEnum("unit_of_measure", [
   "BAGS",
+  "KGS",
   "QUINTALS",
-  "METRIC_TONS",
-  "BOXES",
-  "BARRELS",
+  "TONNES",
 ]);
 
 export const agencyTypeEnum = pgEnum("agency_type", [
