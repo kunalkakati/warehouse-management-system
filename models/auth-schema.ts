@@ -5,11 +5,10 @@ import {
   boolean,
   index,
   uniqueIndex,
+  varchar,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm/_relations";
-import { CockroachVarcharBuilder, varchar } from "drizzle-orm/cockroach-core";
+import { defineRelations } from "drizzle-orm";
 import { godowns } from "./godown-schema";
-import { NotNull } from "drizzle-orm";
 
 // export const UserRole = pgEnum("user_role", ["user", "admin", "manager"]);
 
@@ -101,25 +100,28 @@ export const verification = pgTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
-export const userRelations = relations(user, ({ many, one }) => ({
-  sessions: many(session),
-  accounts: many(account),
-  godown: one(godowns, {
-    fields: [user.godownCode],
-    references: [godowns.code],
+export const authRelations = defineRelations(
+  { user, session, account, godowns },
+  (r: any) => ({
+    user: {
+      sessions: r.many.session(),
+      accounts: r.many.account(),
+      godown: r.one.godowns({
+        from: r.user.godownCode,
+        to: r.godowns.code,
+      }),
+    },
+    session: {
+      user: r.one.user({
+        from: r.session.userId,
+        to: r.user.id,
+      }),
+    },
+    account: {
+      user: r.one.user({
+        from: r.account.userId,
+        to: r.user.id,
+      }),
+    },
   }),
-}));
-
-export const sessionRelations = relations(session, ({ one }) => ({
-  user: one(user, {
-    fields: [session.userId],
-    references: [user.id],
-  }),
-}));
-
-export const accountRelations = relations(account, ({ one }) => ({
-  user: one(user, {
-    fields: [account.userId],
-    references: [user.id],
-  }),
-}));
+);

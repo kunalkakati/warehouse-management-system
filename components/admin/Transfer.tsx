@@ -32,8 +32,6 @@ import {
   CheckCircle2,
   Mail,
   Building2,
-  BadgeCheck,
-  al,
 } from "lucide-react";
 
 const BRANCHES = [

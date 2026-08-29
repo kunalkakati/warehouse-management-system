@@ -21,7 +21,7 @@ const schema = {
 };
 
 // 2. Define all relations in one single export using the 'r' helper
-export const schemaRelations = defineRelations(schema, (r) => ({
+export const schemaRelations = defineRelations(schema, (r: any) => ({
   // Masters (One-to-Many side)
   godowns: {
     locations: r.many.godownLocations(),
