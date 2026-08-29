@@ -26,6 +26,7 @@ import {
 
 import { DepositorSchema, DepositorSchemaType } from "@/lib/zod/zod.godown";
 import { CreateDepositor } from "@/lib/actions/godown-action";
+import { DepositorFormFields } from "./form-fields";
 
 const agencyTypeOptions = [
   { value: "PRIVATE_TRADER", label: "Private Trader" },
@@ -34,52 +35,6 @@ const agencyTypeOptions = [
   { value: "CORPORATE", label: "Corporate" },
   { value: "OTHER", label: "Other" },
 ] as const;
-
-// Centralized field config keeps the JSX below to one mapped block
-// instead of six near-identical hand-written <div> groups.
-const textFields: {
-  name: keyof Omit<DepositorSchemaType, "agencyType">;
-  label: string;
-  placeholder: string;
-  span?: "full" | "half";
-}[] = [
-  {
-    name: "name",
-    label: "Depositor Name",
-    placeholder: "Central Warehouse Alpha",
-    span: "full",
-  },
-  {
-    name: "gstin",
-    label: "GST Number",
-    placeholder: "18AABCU9603R1ZM",
-    span: "half",
-  },
-  {
-    name: "contactPerson",
-    label: "Contact Person",
-    placeholder: "Rajesh Sharma",
-    span: "half",
-  },
-  {
-    name: "phone",
-    label: "Phone Number",
-    placeholder: "+91 98765 43210",
-    span: "half",
-  },
-  {
-    name: "email",
-    label: "Email",
-    placeholder: "depositor@example.com",
-    span: "half",
-  },
-  {
-    name: "address",
-    label: "Address",
-    placeholder: "123 Market Road, Guwahati, Assam",
-    span: "full",
-  },
-];
 
 const AddDepositor = () => {
   const [newDepositorInfo, setNewDepositorInfo] =
@@ -137,7 +92,7 @@ const AddDepositor = () => {
         <CardContent>
           <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-5">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {textFields.map((field) => (
+              {DepositorFormFields.map((field) => (
                 <div
                   key={field.name}
                   className={`space-y-1.5 ${

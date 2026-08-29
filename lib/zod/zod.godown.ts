@@ -81,13 +81,13 @@ export const GodownLocationSchema = z.object({
   godownId: z.uuid("Invalid Godown ID"),
   stackNumber: z.string().min(1, "Stack number is required").max(50),
 
-  maxCapacityBags: z.coerce
+  maxCapacityKg: z.coerce
     .number()
     .int()
     .nonnegative("Capacity cannot be negative"),
-
+  isFumigated: z.boolean().nonoptional(),
   // timestamp
-  isFumigated: z.coerce.date().optional().nullable(),
+  lastFumigatedAt: z.coerce.date().optional().nullable(),
 });
 
 // 5. STOCK LEDGER
@@ -111,5 +111,8 @@ export const StockLedgerSchema = z.object({
 export type godownSchemaType = z.infer<typeof godownSchema>;
 export type DepositorSchemaType = z.input<typeof DepositorSchema>;
 export type CommoditySchemaType = z.infer<typeof CommoditySchema>;
-export type GodownLocationSchemaType = z.infer<typeof GodownLocationSchema>;
+export type GodownLocationSchemaType = z.input<typeof GodownLocationSchema>;
+export type GodownLocationSchemaOutputType = z.infer<
+  typeof GodownLocationSchema
+>;
 export type StockLedgerType = z.infer<typeof StockLedgerSchema>;

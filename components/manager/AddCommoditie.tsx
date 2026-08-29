@@ -24,56 +24,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateCommoditie } from "@/lib/actions/godown-action";
 import { toast } from "sonner";
-
-const FormFields: {
-  name: "name" | "category" | "standardUnit" | "standardBagWeightKg";
-  label: string;
-  placeholder: string;
-  span?: "full" | "half";
-  type: "text" | "select";
-  options?: { label: string; value: string }[];
-}[] = [
-  {
-    name: "name",
-    label: "Commoditie Name",
-    placeholder: "Central Warehouse Alpha",
-    span: "full",
-    type: "text",
-  },
-  {
-    name: "category",
-    label: "Category",
-    placeholder: "Grains",
-    span: "half",
-    type: "select",
-    options: [
-      { label: "Grain", value: "GRAIN" },
-      { label: "Alcohol", value: "ALCOHOL" },
-      { label: "Frozen Item", value: "FROZEN ITEM" },
-      { label: "Electronics", value: "ELECTRONICS" },
-    ],
-  },
-  {
-    name: "standardUnit",
-    label: "Standard Unit",
-    placeholder: "KGS",
-    span: "half",
-    type: "select",
-    options: [
-      { label: "Bags", value: "BAGS" },
-      { label: "kgs", value: "KGS" },
-      { label: "Quintals", value: "QUINTALS" },
-      { label: "tonnes", value: "TONNES" },
-    ],
-  },
-  {
-    name: "standardBagWeightKg",
-    label: "Standard Bag Weight",
-    placeholder: "50",
-    span: "half",
-    type: "text",
-  },
-];
+import { CommoditieFormFields } from "./form-fields";
 
 const AddCommoditie = () => {
   const [newCommodityInfo, setNewCommodityInfo] =
@@ -81,13 +32,13 @@ const AddCommoditie = () => {
   const [commoditieId, setCommoditieId] = useState("");
 
   const {
-    register,
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
+    register, // for plain input
+    control, // for seclct input
+    handleSubmit, // wrapper for custom submit function. it first validate data, if validation success then it call custom submit function with validated data.
+    reset, // reset back to dafult data
+    formState: { errors, isSubmitting }, // errors: catch error like validation error
   } = useForm<CommoditySchemaType>({
-    resolver: zodResolver(CommoditySchema),
+    resolver: zodResolver(CommoditySchema), // useForm tells zod to varify the data using Commodity Schema.
     defaultValues: {
       name: "",
       category: "",
@@ -131,7 +82,7 @@ const AddCommoditie = () => {
           <CardContent>
             <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-5">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {FormFields.map((field) => (
+                {CommoditieFormFields.map((field) => (
                   <div
                     key={field.name}
                     className={`space-y-1.5 ${

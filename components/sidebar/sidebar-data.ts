@@ -15,7 +15,8 @@ export const managerItems = [
 export const adminItems = [
   { title: "Dashboard", url: "/dashboard/admin" },
   { title: "Add Employee", url: "/dashboard/admin/register" },
-  { title: "Add New Godown", url: "/dashboard/admin/godown/add" },
+  { title: "New Godown", url: "/dashboard/admin/godown/add" },
+  { title: "New Godown Location", url: "/dashboard/admin/godown/location" },
   { title: "Transfer Employee", url: "/dashboard/admin/transfer" },
   {
     title: "Employee Attendance",
