@@ -27,3 +27,8 @@ export const adminItems = [
 export const inventoryItems = [
   { title: "Inventory", url: "/inventory/", icon: PackagePlus },
 ];
+
+export const goodsMovment = [
+  { title: "Goods In", url: "/inventory/", icon: PackagePlus },
+  { title: "Goods Out", url: "/inventory/", icon: PackagePlus },
+];
