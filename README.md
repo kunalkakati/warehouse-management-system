@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Orion - A Warehouse Management System 
 
-## Getting Started
+A robust, full-stack web application designed to streamline daily warehouse operations, track inventory, and manage logistics efficiently. This system simplifies the workflow for Data Entry Operators and warehouse managers by providing an intuitive interface for complex logistics tasks.
 
-First, run the development server:
+## 🚀 Features
+- **Goods In & Out Management:** Accurately track incoming shipments, outgoing dispatch, and current stock with real-time logging.
+- **BTS System Management:** Built-in modules for managing, tracking, and syncing with internal BTS systems.
+- **Real-Time Inventory Dashboard:** Clear visibility into current stock levels, storage locations, and capacity limits.
+- **Role-Based Access Control:** Secure, authenticated access tailored for Data Entry Operators, Floor Staff, and Admins.
+- **Reporting & Analytics:** Generate automated daily reports for all warehouse movements and system audits.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 💻 Tech Stack
+- **Framework:** Next.js (App Router, Server Actions)
+- **Database:** PostgreSQL (for robust relational inventory tracking)
+- **ORM:** Drizzle
+- **Language:** JavaScript
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Installation & Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/warehouse-management-system.git
+   cd warehouse-management-system
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Install Dependencies:**
+   Navigate to both the client and server directories to install the required packages.
+   ```bash
+   # In the root/server directory
+   bun install
+   ```
 
-## Learn More
+3. **Environment Variables:**
+   Create a `.env` file in the root directory and add your database URIs and port configuration:
+   ```env
+   PORT=5000
+   DATABASE_URL=your_postgresql_connection_string
+   BETTER_AUTH_SECRET=your_better_auth_secret
+   BETTER_AUTH_URL=your_better_auth_url
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. **Run the Application:**
+   ```bash
+   # Run application
+   bun run dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📈 Future Scope
+- Role-Based Access Control (RBAC) for auditing and seamless operation.
+- Utilizes an append-only event sourcing architecture to track all Goods In/Out movements, eliminating race conditions and maintaining a 100% verifiable audit trail.
+- Multi-warehouse location support.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 👤 Author
+**Kunal**
+Full-Stack Web Developer
