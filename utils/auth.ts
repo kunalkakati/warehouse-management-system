@@ -9,6 +9,13 @@ export const auth = betterAuth({
     provider: "pg", // or "mysql", "sqlite"
     schema,
   }),
+  baseURL: {
+    allowedHosts: [
+      "orion-wms.vercel.app", // Production domain
+      "*.vercel.app", // Dynamic Vercel preview deployments
+      "localhost:3000", // Local development
+    ],
+  },
   emailAndPassword: {
     enabled: true,
   },
