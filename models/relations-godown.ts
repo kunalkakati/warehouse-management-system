@@ -1,4 +1,4 @@
-import { defineRelations } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import {
   godowns,
   depositors,
@@ -10,87 +10,91 @@ import {
 } from "./godown-schema";
 
 // 1. Group all your tables into a single schema object
-const schema = {
-  godowns,
-  depositors,
-  goodsInward,
-  goodsOutward,
-  stockLedger,
-  godownLocations,
-  commodities,
-};
+// const schema = {
+//   godowns,
+//   depositors,
+//   goodsInward,
+//   goodsOutward,
+//   stockLedger,
+//   godownLocations,
+//   commodities,
+// };
 
 // 2. Define all relations in one single export using the 'r' helper
-export const schemaRelations = defineRelations(schema, (r: any) => ({
-  // Masters (One-to-Many side)
-  godowns: {
-    locations: r.many.godownLocations(),
-  },
-  depositors: {
-    inwardReceipts: r.many.goodsInward(),
-    outwardDispatches: r.many.goodsOutward(),
-    stockHoldings: r.many.stockLedger(),
-  },
+export const godownsRelations = relations(godowns, ({ many }) => ({
+  locations: many(godownLocations),
+}));
 
-  commodities: {
-    inwardReceipts: r.many.goodsInward(),
-    outwardDispatches: r.many.goodsOutward(),
-    stockHoldings: r.many.stockLedger(),
-  },
+export const depositorsRelations = relations(depositors, ({ many }) => ({
+  inwardReceipts: many(goodsInward),
+  outwardDispatches: many(goodsOutward),
+  stockHoldings: many(stockLedger),
+}));
 
-  godownLocations: {
-    godown: r.one.godowns({
-      from: r.godownLocations.godownId,
-      to: r.godowns.id,
-    }),
-    inwardReceipts: r.many.goodsInward(),
-    outwardDispatches: r.many.goodsOutward(),
-    stockHoldings: r.many.stockLedger(),
-  },
+export const commoditiesRelations = relations(commodities, ({ many }) => ({
+  inwardReceipts: many(goodsInward),
+  outwardDispatches: many(goodsOutward),
+  stockHoldings: many(stockLedger),
+}));
 
-  // Transactions (Many-to-One side - Requires explicitly defining the foreign keys)
-  goodsInward: {
-    depositor: r.one.depositors({
-      from: r.goodsInward.depositorId,
-      to: r.depositors.id,
+export const godownLocationsRelations = relations(
+  godownLocations,
+  ({ one, many }) => ({
+    godown: one(godowns, {
+      fields: [godownLocations.godownId],
+      references: [godowns.id],
     }),
-    commodity: r.one.commodities({
-      from: r.goodsInward.commodityId,
-      to: r.commodities.id,
-    }),
-    location: r.one.godownLocations({
-      from: r.goodsInward.locationId,
-      to: r.godownLocations.id,
-    }),
-  },
+    inwardReceipts: many(goodsInward),
+    outwardDispatches: many(goodsOutward),
+    stockHoldings: many(stockLedger),
+  }),
+);
 
-  goodsOutward: {
-    depositor: r.one.depositors({
-      from: r.goodsOutward.depositorId,
-      to: r.depositors.id,
-    }),
-    commodity: r.one.commodities({
-      from: r.goodsOutward.commodityId,
-      to: r.commodities.id,
-    }),
-    location: r.one.godownLocations({
-      from: r.goodsOutward.locationId,
-      to: r.godownLocations.id,
-    }),
-  },
+// --------------------------------------------------
+// Transactions (Many-to-One side)
+// --------------------------------------------------
 
-  stockLedger: {
-    depositor: r.one.depositors({
-      from: r.stockLedger.depositorId,
-      to: r.depositors.id,
-    }),
-    commodity: r.one.commodities({
-      from: r.stockLedger.commodityId,
-      to: r.commodities.id,
-    }),
-    location: r.one.godownLocations({
-      from: r.stockLedger.locationId,
-      to: r.godownLocations.id,
-    }),
-  },
+export const goodsInwardRelations = relations(goodsInward, ({ one }) => ({
+  depositor: one(depositors, {
+    fields: [goodsInward.depositorId],
+    references: [depositors.id],
+  }),
+  commodity: one(commodities, {
+    fields: [goodsInward.commodityId],
+    references: [commodities.id],
+  }),
+  location: one(godownLocations, {
+    fields: [goodsInward.locationId],
+    references: [godownLocations.id],
+  }),
+}));
+
+export const goodsOutwardRelations = relations(goodsOutward, ({ one }) => ({
+  depositor: one(depositors, {
+    fields: [goodsOutward.depositorId],
+    references: [depositors.id],
+  }),
+  commodity: one(commodities, {
+    fields: [goodsOutward.commodityId],
+    references: [commodities.id],
+  }),
+  location: one(godownLocations, {
+    fields: [goodsOutward.locationId],
+    references: [godownLocations.id],
+  }),
+}));
+
+export const stockLedgerRelations = relations(stockLedger, ({ one }) => ({
+  depositor: one(depositors, {
+    fields: [stockLedger.depositorId],
+    references: [depositors.id],
+  }),
+  commodity: one(commodities, {
+    fields: [stockLedger.commodityId],
+    references: [commodities.id],
+  }),
+  location: one(godownLocations, {
+    fields: [stockLedger.locationId],
+    references: [godownLocations.id],
+  }),
 }));
