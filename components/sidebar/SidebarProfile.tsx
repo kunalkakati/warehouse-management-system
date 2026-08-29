@@ -13,18 +13,25 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Settings, LogOut, ChevronsUpDown } from "lucide-react";
+import { toast } from "sonner";
 
 export function SidebarProfile() {
   const router = useRouter();
 
   const logOut = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/auth/login");
+    try {
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/auth/login");
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      console.error("Sign out failed:", error);
+      toast.error("Faild to Log-out! please try again.");
+      // Optional: Add a toast notification here so the user knows it failed
+    }
   };
 
   return (
