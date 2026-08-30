@@ -5,7 +5,6 @@ import React from "react";
 import { Controller, UseFormRegister, Control } from "react-hook-form";
 import { InsertGoodsInwardInputType } from "@/lib/zod/zod.godown.transaction";
 import { FieldConfig } from "./inventory-in.config";
-
 // UI Components
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

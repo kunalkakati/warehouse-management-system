@@ -8,14 +8,14 @@ import { Loader2 } from "lucide-react";
 
 // Types, Configs, and Actions
 import {
-  goodsInwardSchema,
-  InsertGoodsInwardInputType,
+  goodsOutwardSchema,
+  InsertGoodsOutwardInputType,
 } from "@/lib/zod/zod.godown.transaction";
-import { processGoodsInward } from "@/lib/actions/inwardGood-action";
-import { GOODS_INWARD_FIELDS } from "./inventory-in.config";
+import { processGoodsOutward } from "@/lib/actions/outwardGood-action";
+import { GOODS_OUTWARD_FIELDS } from "./inventory-out.config";
 
 // Sub-components & UI
-import { DynamicField } from "./DynamicField.in";
+import { DynamicOutField } from "./DynamicField.out";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/card";
 import { toast } from "sonner";
 
-export default function InventoryIn() {
+export default function InventoryOut() {
   // 1. Initialize Form State
   const {
     register,
@@ -34,18 +34,16 @@ export default function InventoryIn() {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<InsertGoodsInwardInputType>({
-    resolver: zodResolver(goodsInwardSchema),
+  } = useForm<InsertGoodsOutwardInputType>({
+    resolver: zodResolver(goodsOutwardSchema),
     defaultValues: {
-      receiptNumber: "",
+      dispatchNumber: "",
       depositorId: "",
       commodityId: "",
       locationId: "",
       truckNumber: "",
       driverName: "",
       gatePassNumber: "",
-      grossWeightKg: "",
-      tareWeightKg: "",
       netWeightKg: "",
       bagCount: undefined,
       status: "PENDING",
@@ -54,15 +52,15 @@ export default function InventoryIn() {
   });
 
   // 2. Handle Valid Submission
-  const onValidSubmit = async (data: InsertGoodsInwardInputType) => {
+  const onValidSubmit = async (data: InsertGoodsOutwardInputType) => {
     const formattedData = {
       ...data,
       bagCount: Number(data.bagCount) || 0,
     };
 
     try {
-      await processGoodsInward(formattedData);
-      toast.success("Good register successfull");
+      await processGoodsOutward(formattedData);
+      toast.success("Good out register successfully");
       reset(); // Clear form on success
     } catch (error) {
       console.error("Database submission failed:", error);
@@ -71,7 +69,9 @@ export default function InventoryIn() {
   };
 
   // 3. Handle Invalid Submission (For debugging)
-  const onInvalidSubmit = (errors: FieldErrors<InsertGoodsInwardInputType>) => {
+  const onInvalidSubmit = (
+    errors: FieldErrors<InsertGoodsOutwardInputType>,
+  ) => {
     console.error("Zod Validation Failed:", errors);
   };
 
@@ -81,10 +81,10 @@ export default function InventoryIn() {
       <Card className="w-full max-w-5xl shadow-sm border-slate-200">
         <CardHeader className="border-b bg-slate-50/50 pb-6">
           <CardTitle className="text-2xl font-semibold text-slate-800">
-            Goods Inward Entry
+            Goods Outward Entry
           </CardTitle>
           <CardDescription>
-            Record incoming inventory, vehicle details, and weight metrics.
+            Record outgoing inventory, vehicle details, and weight metrics.
           </CardDescription>
         </CardHeader>
 
@@ -95,8 +95,8 @@ export default function InventoryIn() {
           >
             {/* RENDER FIELDS DYNAMICALLY */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
-              {GOODS_INWARD_FIELDS.map((field) => (
-                <DynamicField
+              {GOODS_OUTWARD_FIELDS.map((field) => (
+                <DynamicOutField
                   key={field.name}
                   field={field}
                   register={register}
