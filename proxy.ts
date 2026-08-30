@@ -43,11 +43,19 @@ export async function proxy(request: NextRequest) {
     // If they have a valid role, let them through!
     return NextResponse.next();
   }
+  if (pathname.startsWith("/Inventory")) {
+    if (!["user", "admin", "manager"].includes(role)) {
+      // If their role isn't recognized, kick them out
+      return NextResponse.redirect(new URL("/unauthorized", request.url));
+    }
+    // If they have a valid role, let them through!
+    return NextResponse.next();
+  }
 
   // If it's any other route caught by the matcher, let them through
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/Inventory/:path*"],
 };

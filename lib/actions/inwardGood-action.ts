@@ -1,4 +1,6 @@
+"use server";
 // Example: Receiving Goods (Next.js Server Action)
+
 import { db } from "@/lib/db";
 import { goodsInward, stockLedger } from "@/models/godown-schema";
 import { sql } from "drizzle-orm";

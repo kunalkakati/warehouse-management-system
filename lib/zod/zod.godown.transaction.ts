@@ -65,5 +65,7 @@ export const goodsOutwardSchema = z.object({
 });
 
 // TYPES
-export type InsertGoodsInward = z.infer<typeof goodsInwardSchema>;
-export type InsertGoodsOutward = z.infer<typeof goodsOutwardSchema>;
+export type InsertGoodsInwardType = z.infer<typeof goodsInwardSchema>;
+export type InsertGoodsInwardInputType = z.input<typeof goodsInwardSchema>;
+export type InsertGoodsOutwardType = z.infer<typeof goodsOutwardSchema>;
+export type InsertGoodsOutwardInputType = z.input<typeof goodsOutwardSchema>;
