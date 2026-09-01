@@ -7,12 +7,15 @@ import {
   commodities,
   godownLocations,
 } from "@/models/godown-schema";
+
 import {
   NewGodown,
+  Depositor,
   NewDepositor,
   NewCommodity,
   NewGodownLocation,
 } from "@/types/type";
+import { eq } from "drizzle-orm";
 
 export const CreateGodown = async (data: NewGodown) => {
   try {
@@ -52,3 +55,40 @@ export const CreateGodownLocation = async (data: NewGodownLocation) => {
     throw error;
   }
 };
+
+export const GetAllDepositors = async () => {
+  try {
+    const AllDepositors = await db.select().from(depositors);
+    return AllDepositors;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const GetDepositorById = async (id: string) => {
+  try {
+    const depositor = await db
+      .select()
+      .from(depositors)
+      .where(eq(depositors.id, id));
+    return depositor;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getTotalGoodsFromGodown = async () => {
+  try {
+    const goods = await db.query.stockLedger.findMany({
+      with: {
+        depositor: true,
+      },
+    });
+    return goods;
+  } catch (error) {
+    throw error;
+  }
+};
+export type GoodsandDepositorTypes = Awaited<
+  ReturnType<typeof getTotalGoodsFromGodown>
+>;

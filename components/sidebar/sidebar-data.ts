@@ -29,6 +29,6 @@ export const inventoryItems = [
 ];
 
 export const goodsMovment = [
-  { title: "Goods In", url: "/Inventory/goods/in", icon: PackagePlus },
-  { title: "Goods Out", url: "/Inventory/goods/out", icon: PackagePlus },
+  { title: "Goods In", url: "/inventory/goods/in", icon: PackagePlus },
+  { title: "Goods Out", url: "/inventory/goods/out", icon: PackagePlus },
 ];

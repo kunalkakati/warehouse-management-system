@@ -1,0 +1,25 @@
+import React from "react";
+import InventoryLedger from "@/components/indevtory/InventoryLedger";
+import { getTotalGoodsFromGodown } from "@/lib/actions/godown-action";
+
+export default async function InventoryPage() {
+  const occupiedGoods = await getTotalGoodsFromGodown();
+
+  // Safely evaluate data rather than calling .id on a potentially undefined index 0
+  const hasData = Array.isArray(occupiedGoods) && occupiedGoods.length > 0;
+
+  return (
+    <div className="min-h-scree py-8">
+      {hasData ? (
+        <InventoryLedger data={occupiedGoods} />
+      ) : (
+        <div className="flex h-[50vh] flex-col items-center justify-center text-stone-500">
+          <p className="text-lg font-medium">No Goods Found</p>
+          <p className="text-sm mt-1">
+            There are currently no items in the inventory ledger.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -26,6 +26,7 @@ export async function createEmployeeAccount(payload: unknown) {
         employeeId,
         officeAddress,
       },
+      headers: await headers(),
     });
 
     if (!response || !response.user) {
@@ -37,7 +38,7 @@ export async function createEmployeeAccount(payload: unknown) {
         userId: response.user.id,
         role: role as "user" | "admin",
       },
-      // CRITICAL: Pass headers so Better Auth verifies you are an Admin!
+
       headers: await headers(),
     });
 
