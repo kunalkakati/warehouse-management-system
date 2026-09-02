@@ -18,6 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Credentials from "./Credentials";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -28,7 +29,6 @@ export default function Login() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
     const payload = {
       email,
       password,
@@ -127,6 +127,7 @@ export default function Login() {
             >
               Reset
             </Button>
+            <Credentials />
           </CardFooter>
         </form>
       </Card>
