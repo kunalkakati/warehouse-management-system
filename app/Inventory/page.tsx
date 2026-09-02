@@ -5,7 +5,7 @@ import { getTotalGoodsFromGodown } from "@/lib/actions/godown-action";
 export default async function InventoryPage() {
   const occupiedGoods = await getTotalGoodsFromGodown();
 
-  // Safely evaluate data rather than calling .id on a potentially undefined index 0
+  // Check if occupiedGoods is an array and has data.
   const hasData = Array.isArray(occupiedGoods) && occupiedGoods.length > 0;
 
   return (

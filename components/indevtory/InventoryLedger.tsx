@@ -3,6 +3,8 @@
 import React, { useMemo } from "react";
 import { GoodsandDepositorTypes } from "@/lib/actions/godown-action";
 import AgencyTypeChart, { AGENCY_CONFIG } from "./AgencyTypeChart";
+import Link from "next/link";
+import DepositorDetails from "./DepositorDetails";
 
 interface InventoryLedgerProps {
   data: GoodsandDepositorTypes;
@@ -119,13 +121,8 @@ const InventoryLedger = ({ data }: InventoryLedgerProps) => {
                           {item.depositor.id.split("-").pop() ||
                             item.depositor.id}
                         </span>
-                        <a
-                          href={`#depositor-${item.depositor.id}`}
-                          className="font-medium text-[#201C16] underline decoration-[#DEDAD0] underline-offset-4 hover:decoration-[#201C16]"
-                          title={item.depositor.name}
-                        >
-                          {item.depositor.name}
-                        </a>
+
+                        <DepositorDetails depositor={item.depositor} />
                       </div>
                       <p
                         className="mt-1 truncate text-sm text-[#6B6355] sm:max-w-[360px]"
