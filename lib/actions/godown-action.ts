@@ -17,6 +17,8 @@ import {
 } from "@/types/type";
 import { eq } from "drizzle-orm";
 
+// Create
+
 export const CreateGodown = async (data: NewGodown) => {
   try {
     const newGodown = await db.insert(godowns).values(data).returning();
@@ -56,6 +58,25 @@ export const CreateGodownLocation = async (data: NewGodownLocation) => {
   }
 };
 
+// Fetch:
+
+export const getGodownInfoByGodownId = async (gid: string) => {
+  try {
+    const stockForGodown = await db.query.stockLedger.findMany({
+      where: (stockLedger, { eq }) => eq(stockLedger.godownCode, gid),
+      with: {
+        depositor: true,
+        commodity: true,
+        location: true,
+        godown: true,
+      },
+    });
+    return stockForGodown;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const GetAllDepositors = async () => {
   try {
     const AllDepositors = await db.select().from(depositors);
@@ -89,6 +110,12 @@ export const getTotalGoodsFromGodown = async () => {
     throw error;
   }
 };
+
+// Marged Types
 export type GoodsandDepositorTypes = Awaited<
   ReturnType<typeof getTotalGoodsFromGodown>
+>;
+
+export type GodownAndLocationType = Awaited<
+  ReturnType<typeof getGodownInfoByGodownId>
 >;

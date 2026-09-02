@@ -216,6 +216,10 @@ export const stockLedger = pgTable(
     locationId: uuid("location_id")
       .notNull()
       .references(() => godownLocations.id, { onDelete: "restrict" }),
+    godownCode: varchar("godown_code", { length: 50 })
+      .notNull()
+      .default("GHY-21")
+      .references(() => godowns.code, { onDelete: "restrict" }),
 
     // Live stock snapshot for this (Depositor + Commodity + Stack)
     currentBags: integer("current_bags").notNull().default(0),

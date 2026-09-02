@@ -9,18 +9,6 @@ import {
   commodities,
 } from "./godown-schema";
 
-// 1. Group all your tables into a single schema object
-// const schema = {
-//   godowns,
-//   depositors,
-//   goodsInward,
-//   goodsOutward,
-//   stockLedger,
-//   godownLocations,
-//   commodities,
-// };
-
-// 2. Define all relations in one single export using the 'r' helper
 export const godownsRelations = relations(godowns, ({ many }) => ({
   locations: many(godownLocations),
 }));
@@ -96,5 +84,9 @@ export const stockLedgerRelations = relations(stockLedger, ({ one }) => ({
   location: one(godownLocations, {
     fields: [stockLedger.locationId],
     references: [godownLocations.id],
+  }),
+  godown: one(godowns, {
+    fields: [stockLedger.godownCode],
+    references: [godowns.code],
   }),
 }));
