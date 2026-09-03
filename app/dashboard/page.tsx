@@ -16,12 +16,9 @@ const page = async () => {
   if (godownData == "NAN") {
     redirect("/");
   }
-  console.log("Godown Data: ", godownData);
 
   return (
     <div>
-      <h1>Dashboard</h1>
-      <h4>{`Hello ${session?.user.name}`}</h4>
       <GodownInsight data={godownData} />
     </div>
   );
