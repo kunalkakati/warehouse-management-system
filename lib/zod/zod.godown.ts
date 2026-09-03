@@ -47,6 +47,7 @@ export const DepositorSchema = z.object({
     .nullable(),
 
   contactPerson: z.string().max(150).optional().nullable(),
+  godown_code: z.string().min(3, "Godown code is required").max(50),
 
   phone: z
     .string()

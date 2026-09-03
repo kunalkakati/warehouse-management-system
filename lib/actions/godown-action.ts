@@ -77,9 +77,14 @@ export const getGodownInfoByGodownId = async (gid: string) => {
   }
 };
 
-export const GetAllDepositors = async () => {
+export const GetAllDepositorsByGodownCode = async (godownCode: string) => {
   try {
-    const AllDepositors = await db.select().from(depositors);
+    const AllDepositors = await db.query.depositors.findMany({
+      where: (depositors, { eq }) => eq(depositors.godown_code, godownCode),
+      with: {
+        godown: true,
+      },
+    });
     return AllDepositors;
   } catch (error) {
     throw error;
@@ -98,9 +103,12 @@ export const GetDepositorById = async (id: string) => {
   }
 };
 
-export const getTotalGoodsFromGodown = async () => {
+export const getTotalGoodsFromGodownByGodownCode = async (
+  godownCode: string,
+) => {
   try {
     const goods = await db.query.stockLedger.findMany({
+      where: (stockLedger, { eq }) => eq(stockLedger.godownCode, godownCode),
       with: {
         depositor: true,
       },
@@ -113,7 +121,7 @@ export const getTotalGoodsFromGodown = async () => {
 
 // Marged Types
 export type GoodsandDepositorTypes = Awaited<
-  ReturnType<typeof getTotalGoodsFromGodown>
+  ReturnType<typeof getTotalGoodsFromGodownByGodownCode>
 >;
 
 export type GodownAndLocationType = Awaited<

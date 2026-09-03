@@ -27,6 +27,7 @@ import {
 import { DepositorSchema, DepositorSchemaType } from "@/lib/zod/zod.godown";
 import { CreateDepositor } from "@/lib/actions/godown-action";
 import { DepositorFormFields } from "./form-fields";
+import { authClient } from "@/lib/auth-client";
 
 const agencyTypeOptions = [
   { value: "PRIVATE_TRADER", label: "Private Trader" },
@@ -39,6 +40,8 @@ const agencyTypeOptions = [
 const AddDepositor = () => {
   const [newDepositorInfo, setNewDepositorInfo] =
     useState<DepositorSchemaType | null>(null);
+
+  const { data: session } = authClient.useSession();
 
   const {
     register,
@@ -61,7 +64,11 @@ const AddDepositor = () => {
 
   const onFormSubmit = async (data: DepositorSchemaType) => {
     try {
-      const newDepositor = await CreateDepositor(data);
+      const payload = {
+        ...data,
+        godown_code: session?.user?.godownCode || "NOT SET",
+      };
+      const newDepositor = await CreateDepositor(payload);
       const created = newDepositor?.[0];
       if (!created) {
         toast.error("Depositor creation failed. Please try again.");

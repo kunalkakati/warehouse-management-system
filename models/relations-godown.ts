@@ -13,10 +13,14 @@ export const godownsRelations = relations(godowns, ({ many }) => ({
   locations: many(godownLocations),
 }));
 
-export const depositorsRelations = relations(depositors, ({ many }) => ({
+export const depositorsRelations = relations(depositors, ({ many, one }) => ({
   inwardReceipts: many(goodsInward),
   outwardDispatches: many(goodsOutward),
   stockHoldings: many(stockLedger),
+  godown: one(godowns, {
+    fields: [depositors.godown_code],
+    references: [godowns.code],
+  }),
 }));
 
 export const commoditiesRelations = relations(commodities, ({ many }) => ({

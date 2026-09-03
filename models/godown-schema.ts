@@ -58,6 +58,10 @@ export const depositors = pgTable("depositors", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   agencyType: agencyTypeEnum("agency_type").notNull().default("PRIVATE_TRADER"),
+  godown_code: varchar("godown_code", { length: 50 })
+    .notNull()
+    .default("GHY-21")
+    .references(() => godowns.code, { onDelete: "restrict" }),
   gstin: varchar("gstin", { length: 15 }),
   contactPerson: varchar("contact_person", { length: 150 }),
   phone: varchar("phone", { length: 20 }).notNull(),
