@@ -6,10 +6,14 @@ import { eq } from "drizzle-orm";
 
 export const getAllEmployee = async () => {
   try {
-    const users = await db.select().from(user);
+    const users = await db.query.user.findMany({
+      with: {
+        godown: true,
+      },
+    });
     return users;
   } catch (error) {
-    console.error("Error in getAllEMployee() ", error);
+    console.error("Error in getAllEmployee() ", error);
     throw error;
   }
 };
