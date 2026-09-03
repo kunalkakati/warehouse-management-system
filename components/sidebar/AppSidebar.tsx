@@ -26,7 +26,11 @@ import InventoryNav from "./InventoryNav";
 import ManagerNav from "./ManagerNav";
 import AdminNav from "./AdminNav";
 
-export function AppSidebar() {
+export function AppSidebar({
+  userRole,
+}: {
+  userRole: string | null | undefined;
+}) {
   const pathname = usePathname();
 
   return (
@@ -59,7 +63,8 @@ export function AppSidebar() {
               {/* Manager section  */}
               <ManagerNav pathname={pathname} />
               {/* Admin Section  */}
-              <AdminNav pathname={pathname} />
+
+              {userRole == "admin" && <AdminNav pathname={pathname} />}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

@@ -127,22 +127,24 @@ export default function GodownLocation() {
             control={control}
             render={({ field: controllerField }) => (
               <Popover>
-                <PopoverTrigger {...({ asChild: true } as any)}>
-                  <Button
-                    variant="outline"
-                    className={`${!fumigationCheck && "hidden"} w-full justify-start text-left font-normal ${
-                      !controllerField.value ? "text-muted-foreground" : "" // Gray text if empty
-                    } ${hasError ? "border-red-500 focus-visible:ring-red-500" : ""}`} // Red border on error
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {/* Display selected date or fallback to placeholder text */}
-                    {controllerField.value ? (
-                      format(controllerField.value as Date, "PPP")
-                    ) : (
-                      <span>{field.placeholder}</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
+                <PopoverTrigger
+                  render={
+                    <Button
+                      variant="outline"
+                      className={`${!fumigationCheck && "hidden"} w-full justify-start text-left font-normal ${
+                        !controllerField.value ? "text-muted-foreground" : "" // Gray text if empty
+                      } ${hasError ? "border-red-500 focus-visible:ring-red-500" : ""}`} // Red border on error
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {/* Display selected date or fallback to placeholder text */}
+                      {controllerField.value ? (
+                        format(controllerField.value as Date, "PPP")
+                      ) : (
+                        <span>{field.placeholder}</span>
+                      )}
+                    </Button>
+                  }
+                />
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
