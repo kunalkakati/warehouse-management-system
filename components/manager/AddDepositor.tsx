@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Loader2, Building2, CheckCircle2 } from "lucide-react";
@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from "../ui/select";
 
-import { DepositorSchema, DepositorSchemaType } from "@/lib/zod/zod.godown";
+import { DepositorFromSchema, DepositorSchemaType } from "@/lib/zod/zod.godown";
 import { CreateDepositor } from "@/lib/actions/godown-action";
 import { DepositorFormFields } from "./form-fields";
 import { authClient } from "@/lib/auth-client";
@@ -42,6 +42,7 @@ const AddDepositor = () => {
     useState<DepositorSchemaType | null>(null);
 
   const { data: session } = authClient.useSession();
+  const gCode = session?.user?.godownCode;
 
   const {
     register,
@@ -50,7 +51,7 @@ const AddDepositor = () => {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<DepositorSchemaType>({
-    resolver: zodResolver(DepositorSchema),
+    resolver: zodResolver(DepositorFromSchema),
     defaultValues: {
       name: "",
       agencyType: "OTHER",
@@ -63,10 +64,16 @@ const AddDepositor = () => {
   });
 
   const onFormSubmit = async (data: DepositorSchemaType) => {
+    if (!gCode) {
+      toast.error(
+        "Could not determine your godown yet — please wait a moment and try again.",
+      );
+      return;
+    }
     try {
       const payload = {
         ...data,
-        godown_code: session?.user?.godownCode || "NOT SET",
+        godown_code: gCode,
       };
       const newDepositor = await CreateDepositor(payload);
       const created = newDepositor?.[0];
@@ -83,8 +90,18 @@ const AddDepositor = () => {
     }
   };
 
+  const oninvalid = (formErrors: FieldErrors<DepositorSchemaType>) => {
+    console.log("Form validation failed:", formErrors);
+
+    const count = Object.keys(formErrors).length;
+    toast.error(
+      `Please fix the highlighted field${count === 1 ? "" : "s"} before submitting. ${count} error${count === 1 ? "" : "s"} found.`,
+    );
+  };
+
   return (
     <div className="mx-auto w-full max-w-2xl space-y-6 p-4 sm:p-6">
+      <h1>{gCode}</h1>
       <Card className="border-border/60 shadow-sm">
         <CardHeader className="space-y-1">
           <div className="flex items-center gap-2">
@@ -97,7 +114,12 @@ const AddDepositor = () => {
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-5">
+          <form
+            onSubmit={(e) => {
+              handleSubmit(onFormSubmit, oninvalid)(e);
+            }}
+            className="space-y-5"
+          >
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {DepositorFormFields.map((field) => (
                 <div

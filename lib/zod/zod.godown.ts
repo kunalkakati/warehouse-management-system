@@ -47,7 +47,7 @@ export const DepositorSchema = z.object({
     .nullable(),
 
   contactPerson: z.string().max(150).optional().nullable(),
-  godown_code: z.string().min(3, "Godown code is required").max(50),
+  godown_code: z.string(),
 
   phone: z
     .string()
@@ -109,8 +109,9 @@ export const StockLedgerSchema = z.object({
 });
 
 // Types.
+export const DepositorFromSchema = DepositorSchema.omit({ godown_code: true });
 export type godownSchemaType = z.infer<typeof godownSchema>;
-export type DepositorSchemaType = z.input<typeof DepositorSchema>;
+export type DepositorSchemaType = z.input<typeof DepositorFromSchema>;
 export type CommoditySchemaType = z.infer<typeof CommoditySchema>;
 export type GodownLocationSchemaType = z.input<typeof GodownLocationSchema>;
 export type GodownLocationSchemaOutputType = z.infer<
