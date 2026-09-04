@@ -101,7 +101,6 @@ const AddDepositor = () => {
 
   return (
     <div className="mx-auto w-full max-w-2xl space-y-6 p-4 sm:p-6">
-      <h1>{gCode}</h1>
       <Card className="border-border/60 shadow-sm">
         <CardHeader className="space-y-1">
           <div className="flex items-center gap-2">
