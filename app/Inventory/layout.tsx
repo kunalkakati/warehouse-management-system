@@ -5,17 +5,14 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { headers } from "next/headers";
-import { auth } from "@/utils/auth";
+import { getSession } from "@/lib/auth-session";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
   return (
     <SidebarProvider>
       <AppSidebar userRole={session?.user.role} />

@@ -1,14 +1,12 @@
-import React from "react";
-import { auth } from "@/utils/auth";
-import { headers } from "next/headers";
+import React, { Suspense } from "react";
 import { getGodownInfoByGodownId } from "@/lib/actions/godown-action";
 import { redirect } from "next/navigation";
 import GodownInsight from "@/components/dashboard/GodownInsight";
+import GodownInsightSkeleton from "@/components/skeletons/GodownInsightSkeleton";
+import { getSession } from "@/lib/auth-session";
 
-const page = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+const DashboardContent = async () => {
+  const session = await getSession();
 
   const godownData = session?.user.godownCode
     ? await getGodownInfoByGodownId(session?.user.godownCode)
@@ -17,9 +15,15 @@ const page = async () => {
     redirect("/");
   }
 
+  return <GodownInsight data={godownData} />;
+};
+
+const page = () => {
   return (
     <div>
-      <GodownInsight data={godownData} />
+      <Suspense fallback={<GodownInsightSkeleton />}>
+        <DashboardContent />
+      </Suspense>
     </div>
   );
 };

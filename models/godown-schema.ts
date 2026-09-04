@@ -7,6 +7,7 @@ import {
   numeric,
   timestamp,
   pgEnum,
+  index,
   uniqueIndex,
   boolean,
 } from "drizzle-orm/pg-core";
@@ -236,6 +237,7 @@ export const stockLedger = pgTable(
       .notNull(),
   },
   (table) => [
+    index("stock_ledger_godown_code_idx").on(table.godownCode),
     // Unique composite index: each depositor's commodity in a specific stack has exactly ONE row
     uniqueIndex("unique_stock_entry_idx").on(
       table.depositorId,

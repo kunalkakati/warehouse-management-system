@@ -1,13 +1,7 @@
-"use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import HowToUseButton from "@/components/HowToUseButton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ArrowRight,
   Box,
@@ -16,7 +10,6 @@ import {
   Zap,
   CheckCircle2,
 } from "lucide-react";
-import { toast } from "sonner";
 
 export default function LandingPage() {
   return (
@@ -86,22 +79,7 @@ export default function LandingPage() {
                 Book a Demo <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-            <Button
-              onClick={() =>
-                toast.info(
-                  "Upon successful execution of the contract, we will send the administrator credentials to your email and provide all necessary training.",
-                  {
-                    duration: Infinity,
-                    closeButton: true,
-                  },
-                )
-              }
-              size="lg"
-              variant="outline"
-              className="w-full sm:w-auto"
-            >
-              How i use it for my warehouse?
-            </Button>
+            <HowToUseButton />
           </div>
 
           {/* Abstract Dashboard Mockup */}
