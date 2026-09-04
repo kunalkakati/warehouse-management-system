@@ -28,8 +28,10 @@ import AdminNav from "./AdminNav";
 
 export function AppSidebar({
   userRole,
+  isSuperAdmin,
 }: {
   userRole: string | null | undefined;
+  isSuperAdmin: boolean | null | undefined;
 }) {
   const pathname = usePathname();
 
@@ -65,7 +67,9 @@ export function AppSidebar({
                 (userRole == "admin" && <ManagerNav pathname={pathname} />)}
               {/* Admin Section  */}
 
-              {userRole == "admin" && <AdminNav pathname={pathname} />}
+              {userRole == "admin" && (
+                <AdminNav pathname={pathname} isSuperAdmin={isSuperAdmin} />
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

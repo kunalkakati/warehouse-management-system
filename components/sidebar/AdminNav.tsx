@@ -13,7 +13,17 @@ import { Shield, ChevronRight } from "lucide-react";
 import { adminItems } from "./sidebar-data";
 import { NavSubItem } from "../NavItem";
 
-const AdminNav = ({ pathname }: { pathname: string }) => {
+const AdminNav = ({
+  pathname,
+  isSuperAdmin,
+}: {
+  pathname: string;
+  isSuperAdmin: boolean | null | undefined;
+}) => {
+  const FilteredAdminItem = !isSuperAdmin
+    ? adminItems.filter((item) => item.title != "New Godown")
+    : adminItems;
+
   return (
     <Collapsible
       defaultOpen={pathname.startsWith("/dashboard/admin")}
@@ -31,7 +41,7 @@ const AdminNav = ({ pathname }: { pathname: string }) => {
         </CollapsibleTrigger>
         <CollapsibleContent>
           <SidebarMenuSub>
-            {adminItems.map((item) => (
+            {FilteredAdminItem.map((item) => (
               <NavSubItem key={item.title} item={item} pathname={pathname} />
             ))}
           </SidebarMenuSub>
