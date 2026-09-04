@@ -52,11 +52,11 @@ export default function LandingPage() {
 
           <div className="flex items-center gap-4">
             <Link href="/auth/login">
-              <Button variant="ghost" className="hidden sm:inline-flex">
+              <Button variant="ghost" className="inline-flex">
                 Log in
               </Button>
             </Link>
-            <Link href="/unfinished">
+            <Link href="/contact">
               <Button variant="ghost" className="hidden sm:inline-flex">
                 Contact us
               </Button>

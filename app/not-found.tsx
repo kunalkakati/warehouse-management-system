@@ -1,8 +1,14 @@
+// app/not-found.tsx
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Hammer, ArrowLeft, Wrench } from "lucide-react";
+import { headers } from "next/headers";
+import { auth } from "@/utils/auth";
 
-export default function UnderConstructionPage() {
+export default async function NotFound() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center p-4 text-center bg-background text-foreground font-sans">
       <div className="relative flex items-center justify-center mb-8">
@@ -31,10 +37,12 @@ export default function UnderConstructionPage() {
           Back to Dashboard
         </Button>
       </Link>
-      <p className="text-sm mt-3 text-red-500 max-w-md mb-8">
-        * Please click log-in, demo-credentials are listed there. you can use it
-        to explore.
-      </p>
+      {!session && (
+        <p className="text-sm mt-3 text-red-500 max-w-md mb-8">
+          * Please click log-in, demo-credentials are listed there. you can use
+          it to explore.
+        </p>
+      )}
     </div>
   );
 }
