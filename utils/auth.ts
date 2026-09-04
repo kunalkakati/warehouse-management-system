@@ -35,6 +35,15 @@ export const auth = betterAuth({
         type: "string",
         required: true,
       },
+      superAdmin: {
+        type: "boolean",
+        default: false,
+        required: false,
+      },
+      SuperAdminId: {
+        type: "string",
+        required: false,
+      },
     },
   },
 });

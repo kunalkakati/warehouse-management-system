@@ -61,7 +61,8 @@ export function AppSidebar({
                 />
               ))}
               {/* Manager section  */}
-              <ManagerNav pathname={pathname} />
+              {userRole == "manager" ||
+                (userRole == "admin" && <ManagerNav pathname={pathname} />)}
               {/* Admin Section  */}
 
               {userRole == "admin" && <AdminNav pathname={pathname} />}

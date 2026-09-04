@@ -27,7 +27,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function Registration() {
+export default function Registration({
+  isSuperAdmin,
+}: {
+  isSuperAdmin: boolean | null;
+}) {
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
@@ -225,7 +229,9 @@ export default function Registration() {
                     <SelectContent>
                       <SelectItem value="user">Warehouse Operator</SelectItem>
                       <SelectItem value="manager">Manager</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
+                      {isSuperAdmin && (
+                        <SelectItem value="admin">Admin</SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>

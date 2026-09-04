@@ -19,6 +19,8 @@ export const user = pgTable("user", {
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
   role: text("role"),
+  superAdmin: boolean("super_admin").default(false),
+  superAdminId: text("super_admin_id").default("Not Assigned"),
   banned: boolean("banned"),
   godownCode: varchar("godown_code")
     .notNull()
