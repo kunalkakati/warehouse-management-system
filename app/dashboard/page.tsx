@@ -1,8 +1,7 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { getGodownInfoByGodownId } from "@/lib/actions/godown-action";
 import { redirect } from "next/navigation";
 import GodownInsight from "@/components/dashboard/GodownInsight";
-import GodownInsightSkeleton from "@/components/skeletons/GodownInsightSkeleton";
 import { getSession } from "@/lib/auth-session";
 
 const DashboardContent = async () => {
@@ -21,9 +20,7 @@ const DashboardContent = async () => {
 const page = () => {
   return (
     <div>
-      <Suspense fallback={<GodownInsightSkeleton />}>
-        <DashboardContent />
-      </Suspense>
+      <DashboardContent />
     </div>
   );
 };
