@@ -17,6 +17,7 @@ import { toast } from "sonner";
 
 export function SidebarProfile() {
   const router = useRouter();
+  const { data: session } = authClient.useSession();
 
   const logOut = async () => {
     try {
@@ -50,9 +51,11 @@ export function SidebarProfile() {
               <Settings className="size-4 text-slate-600 dark:text-slate-300 group-hover:rotate-45 transition-transform duration-300" />
             </div>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-semibold">Admin User</span>
+              <span className="truncate font-semibold">
+                {session?.user?.name || "Admin User"}
+              </span>
               <span className="truncate text-xs text-muted-foreground">
-                admin@store.com
+                {session?.user?.email}
               </span>
             </div>
             <ChevronsUpDown className="ml-auto size-4 text-muted-foreground/50 group-hover:text-foreground transition-colors" />
