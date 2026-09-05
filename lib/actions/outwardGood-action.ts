@@ -2,23 +2,51 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { goodsOutward, stockLedger } from "@/models/godown-schema";
+import {
+  depositors,
+  goodsOutward,
+  godowns,
+  godownLocations,
+  stockLedger,
+} from "@/models/godown-schema";
 import { sql, eq, and } from "drizzle-orm";
+import {
+  goodsOutwardSchema,
+  InsertGoodsOutwardInputType,
+} from "@/lib/zod/zod.godown.transaction";
+import { requireGodownAccess, requireRole } from "@/lib/authorization";
 
-interface OutwardPayload {
-  dispatchNumber: string;
-  releaseOrderNumber: string;
-  depositorId: string;
-  commodityId: string;
-  locationId: string;
-  truckNumber: string;
-  netWeightKg: string;
-  bagCount: number;
-}
+export async function processGoodsOutward(
+  payload: InsertGoodsOutwardInputType,
+) {
+  const session = await requireRole(["user", "manager", "admin"]);
+  const validation = goodsOutwardSchema.safeParse(payload);
+  if (!validation.success) {
+    throw new Error(validation.error.issues[0]?.message ?? "Invalid dispatch.");
+  }
+  const data = validation.data;
 
-export async function processGoodsOutward(payload: OutwardPayload) {
   return await db.transaction(async (tx) => {
-    // READ & LOCK: Fetch the current stock and lock the row
+    // Resolve the warehouse from the selected physical location before checking access.
+    const [location] = await tx
+      .select({ godownCode: godowns.code })
+      .from(godownLocations)
+      .innerJoin(godowns, eq(godownLocations.godownId, godowns.id))
+      .where(eq(godownLocations.id, data.locationId));
+    if (!location) throw new Error("Storage location was not found.");
+
+    const [depositor] = await tx
+      .select({ godownCode: depositors.godown_code })
+      .from(depositors)
+      .where(eq(depositors.id, data.depositorId));
+    if (!depositor) throw new Error("Depositor was not found.");
+    requireGodownAccess(session, depositor.godownCode);
+    if (depositor.godownCode !== location.godownCode) {
+      throw new Error(
+        "Depositor and storage location belong to different godowns.",
+      );
+    }
+
     const [currentStock] = await tx
       .select()
       .from(stockLedger)
@@ -26,23 +54,24 @@ export async function processGoodsOutward(payload: OutwardPayload) {
         and(
           eq(stockLedger.depositorId, payload.depositorId),
           eq(stockLedger.commodityId, payload.commodityId),
-          eq(stockLedger.locationId, payload.locationId),
+          eq(stockLedger.locationId, data.locationId),
         ),
       )
-      .for("update"); // Locks this specific row until the transaction finishes
+      // Lock the balance so two dispatches cannot spend the same stock concurrently.
+      .for("update");
 
     // CHECK: Validate that stock exists and is sufficient
     if (!currentStock) {
       throw new Error("No stock ledger entry found for this combination.");
     }
 
-    if (currentStock.currentBags < payload.bagCount) {
+    if (currentStock.currentBags < data.bagCount) {
       throw new Error(
-        `Insufficient stock. Requested: ${payload.bagCount} bags, Available: ${currentStock.currentBags} bags.`,
+        `Insufficient stock. Requested: ${data.bagCount} bags, Available: ${currentStock.currentBags} bags.`,
       );
     }
 
-    if (Number(currentStock.currentWeightKg) < Number(payload.netWeightKg)) {
+    if (Number(currentStock.currentWeightKg) < Number(data.netWeightKg)) {
       throw new Error("Insufficient weight available in this stack.");
     }
 
@@ -50,8 +79,8 @@ export async function processGoodsOutward(payload: OutwardPayload) {
     await tx
       .update(stockLedger)
       .set({
-        currentBags: sql`${stockLedger.currentBags} - ${payload.bagCount}`,
-        currentWeightKg: sql`${stockLedger.currentWeightKg} - ${payload.netWeightKg}::numeric`,
+        currentBags: sql`${stockLedger.currentBags} - ${data.bagCount}`,
+        currentWeightKg: sql`${stockLedger.currentWeightKg} - ${data.netWeightKg}::numeric`,
         lastUpdated: new Date(),
       })
       .where(eq(stockLedger.id, currentStock.id));
@@ -59,7 +88,7 @@ export async function processGoodsOutward(payload: OutwardPayload) {
     // WRITE: Log the outward dispatch receipt
     const [dispatchRecord] = await tx
       .insert(goodsOutward)
-      .values(payload)
+      .values(data)
       .returning();
 
     return dispatchRecord;

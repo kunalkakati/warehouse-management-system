@@ -10,7 +10,9 @@ import {
   index,
   uniqueIndex,
   boolean,
+  check,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 // -------------------------------------------------------------
 // ENUMS
@@ -61,7 +63,6 @@ export const depositors = pgTable("depositors", {
   agencyType: agencyTypeEnum("agency_type").notNull().default("PRIVATE_TRADER"),
   godown_code: varchar("godown_code", { length: 50 })
     .notNull()
-    .default("GHY-21")
     .references(() => godowns.code, { onDelete: "restrict" }),
   gstin: varchar("gstin", { length: 15 }),
   contactPerson: varchar("contact_person", { length: 150 }),
@@ -124,89 +125,122 @@ export const godownLocations = pgTable(
 
 // -------------------------------------------------------------
 // 4. GOODS INWARD (Intake Transactions)
+// Each row is the permanent receipt record for one incoming vehicle/load.
 // -------------------------------------------------------------
-export const goodsInward = pgTable("goods_inward", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  receiptNumber: varchar("receipt_number", { length: 100 }).notNull().unique(), // e.g., "CWC-IN-2026-001"
-  depositorId: uuid("depositor_id")
-    .notNull()
-    .references(() => depositors.id, { onDelete: "restrict" }),
-  commodityId: uuid("commodity_id")
-    .notNull()
-    .references(() => commodities.id, { onDelete: "restrict" }),
-  locationId: uuid("location_id")
-    .notNull()
-    .references(() => godownLocations.id, { onDelete: "restrict" }),
+export const goodsInward = pgTable(
+  "goods_inward",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    receiptNumber: varchar("receipt_number", { length: 100 })
+      .notNull()
+      .unique(), // e.g., "CWC-IN-2026-001"
+    depositorId: uuid("depositor_id")
+      .notNull()
+      .references(() => depositors.id, { onDelete: "restrict" }),
+    commodityId: uuid("commodity_id")
+      .notNull()
+      .references(() => commodities.id, { onDelete: "restrict" }),
+    locationId: uuid("location_id")
+      .notNull()
+      .references(() => godownLocations.id, { onDelete: "restrict" }),
 
-  // Transport & Logistics
-  truckNumber: varchar("truck_number", { length: 50 }).notNull(),
-  driverName: varchar("driver_name", { length: 150 }),
-  gatePassNumber: varchar("gate_pass_number", { length: 100 }),
+    // Transport & Logistics
+    truckNumber: varchar("truck_number", { length: 50 }).notNull(),
+    driverName: varchar("driver_name", { length: 150 }),
+    gatePassNumber: varchar("gate_pass_number", { length: 100 }),
 
-  // Weights & Counts
-  grossWeightKg: numeric("gross_weight_kg", {
-    precision: 12,
-    scale: 2,
-  }).notNull(),
-  tareWeightKg: numeric("tare_weight_kg", {
-    precision: 12,
-    scale: 2,
-  }).notNull(),
-  netWeightKg: numeric("net_weight_kg", { precision: 12, scale: 2 }).notNull(),
-  bagCount: integer("bag_count").notNull(),
+    // Weights & Counts
+    grossWeightKg: numeric("gross_weight_kg", {
+      precision: 12,
+      scale: 2,
+    }).notNull(),
+    tareWeightKg: numeric("tare_weight_kg", {
+      precision: 12,
+      scale: 2,
+    }).notNull(),
+    netWeightKg: numeric("net_weight_kg", {
+      precision: 12,
+      scale: 2,
+    }).notNull(),
+    bagCount: integer("bag_count").notNull(),
 
-  status: transactionStatusEnum("status").notNull().default("COMPLETED"),
-  receivedAt: timestamp("received_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  remarks: text("remarks"),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-});
+    status: transactionStatusEnum("status").notNull().default("COMPLETED"),
+    receivedAt: timestamp("received_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    remarks: text("remarks"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    check(
+      "goods_inward_weights_check",
+      sql`${table.grossWeightKg} >= ${table.tareWeightKg}`,
+    ),
+    check(
+      "goods_inward_quantities_check",
+      sql`${table.netWeightKg} >= 0 AND ${table.bagCount} >= 0`,
+    ),
+  ],
+);
 
 // -------------------------------------------------------------
 // 5. GOODS OUTWARD (Dispatch Transactions)
+// Each row records an approved quantity leaving a storage location.
 // -------------------------------------------------------------
-export const goodsOutward = pgTable("goods_outward", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  dispatchNumber: varchar("dispatch_number", { length: 100 })
-    .notNull()
-    .unique(), // e.g., "CWC-OUT-2026-001"
-  releaseOrderNumber: varchar("release_order_number", {
-    length: 100,
-  }).notNull(), // Authorized Delivery Order No
-  depositorId: uuid("depositor_id")
-    .notNull()
-    .references(() => depositors.id, { onDelete: "restrict" }),
-  commodityId: uuid("commodity_id")
-    .notNull()
-    .references(() => commodities.id, { onDelete: "restrict" }),
-  locationId: uuid("location_id")
-    .notNull()
-    .references(() => godownLocations.id, { onDelete: "restrict" }),
+export const goodsOutward = pgTable(
+  "goods_outward",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    dispatchNumber: varchar("dispatch_number", { length: 100 })
+      .notNull()
+      .unique(), // e.g., "CWC-OUT-2026-001"
+    releaseOrderNumber: varchar("release_order_number", {
+      length: 100,
+    }).notNull(), // Authorized Delivery Order No
+    depositorId: uuid("depositor_id")
+      .notNull()
+      .references(() => depositors.id, { onDelete: "restrict" }),
+    commodityId: uuid("commodity_id")
+      .notNull()
+      .references(() => commodities.id, { onDelete: "restrict" }),
+    locationId: uuid("location_id")
+      .notNull()
+      .references(() => godownLocations.id, { onDelete: "restrict" }),
 
-  // Transport & Logistics
-  truckNumber: varchar("truck_number", { length: 50 }).notNull(),
-  driverName: varchar("driver_name", { length: 150 }),
-  gatePassNumber: varchar("gate_pass_number", { length: 100 }),
+    // Transport & Logistics
+    truckNumber: varchar("truck_number", { length: 50 }).notNull(),
+    driverName: varchar("driver_name", { length: 150 }),
+    gatePassNumber: varchar("gate_pass_number", { length: 100 }),
 
-  // Dispatched quantities
-  netWeightKg: numeric("net_weight_kg", { precision: 12, scale: 2 }).notNull(),
-  bagCount: integer("bag_count").notNull(),
+    // Dispatched quantities
+    netWeightKg: numeric("net_weight_kg", {
+      precision: 12,
+      scale: 2,
+    }).notNull(),
+    bagCount: integer("bag_count").notNull(),
 
-  status: transactionStatusEnum("status").notNull().default("COMPLETED"),
-  dispatchedAt: timestamp("dispatched_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  remarks: text("remarks"),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-});
+    status: transactionStatusEnum("status").notNull().default("COMPLETED"),
+    dispatchedAt: timestamp("dispatched_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    remarks: text("remarks"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    check(
+      "goods_outward_quantities_check",
+      sql`${table.netWeightKg} >= 0 AND ${table.bagCount} >= 0`,
+    ),
+  ],
+);
 
 // -------------------------------------------------------------
 // 6. STOCK LEDGER (Real-Time Current Balance)
+// This is a fast balance snapshot; inward and outward records remain the transaction history.
 // -------------------------------------------------------------
 export const stockLedger = pgTable(
   "stock_ledger",
@@ -223,7 +257,6 @@ export const stockLedger = pgTable(
       .references(() => godownLocations.id, { onDelete: "restrict" }),
     godownCode: varchar("godown_code", { length: 50 })
       .notNull()
-      .default("GHY-21")
       .references(() => godowns.code, { onDelete: "restrict" }),
 
     // Live stock snapshot for this (Depositor + Commodity + Stack)
@@ -243,6 +276,10 @@ export const stockLedger = pgTable(
       table.depositorId,
       table.commodityId,
       table.locationId,
+    ),
+    check(
+      "stock_ledger_quantities_check",
+      sql`${table.currentBags} >= 0 AND ${table.currentWeightKg} >= 0`,
     ),
   ],
 );

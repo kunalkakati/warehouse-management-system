@@ -3,8 +3,13 @@
 import { auth } from "@/utils/auth";
 import { userRagistrationSchema } from "@/lib/zod/zod.user";
 import { headers } from "next/headers";
+import { requireRole } from "@/lib/authorization";
+import { db } from "@/lib/db";
+import { user } from "@/models/auth-schema";
+import { eq } from "drizzle-orm";
 
 export async function createEmployeeAccount(payload: unknown) {
+  const session = await requireRole(["admin"]);
   // 1. Validate on the server to ensure data integrity
   const validation = userRagistrationSchema.safeParse(payload);
 
@@ -16,6 +21,12 @@ export async function createEmployeeAccount(payload: unknown) {
 
   const { name, email, password, godownCode, role, employeeId, officeAddress } =
     validation.data;
+  if (role === "admin" && !session.user.superAdmin) {
+    return { error: "Only a super administrator can create admin accounts." };
+  }
+  if (!session.user.superAdmin && session.user.godownCode !== godownCode) {
+    return { error: "Employees must belong to your assigned godown." };
+  }
   try {
     const response = await auth.api.signUpEmail({
       body: {
@@ -33,14 +44,10 @@ export async function createEmployeeAccount(payload: unknown) {
       return { error: "Failed to create user. Please try again." };
     }
 
-    await auth.api.setRole({
-      body: {
-        userId: response.user.id,
-        role: role as "user" | "admin",
-      },
-
-      headers: await headers(),
-    });
+    await db
+      .update(user)
+      .set({ role, updatedAt: new Date() })
+      .where(eq(user.id, response.user.id));
 
     return { success: true, user: response.user };
   } catch (error: unknown) {

@@ -12,29 +12,33 @@ import { godowns } from "./godown-schema";
 
 // export const UserRole = pgEnum("user_role", ["user", "admin", "manager"]);
 
-export const user = pgTable("user", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  emailVerified: boolean("email_verified").default(false).notNull(),
-  image: text("image"),
-  role: text("role"),
-  superAdmin: boolean("super_admin").default(false),
-  superAdminId: text("super_admin_id").default("Not Assigned"),
-  banned: boolean("banned"),
-  godownCode: varchar("godown_code")
-    .notNull()
-    .references(() => godowns.code, { onDelete: "set null" }),
-  banReason: text("ban_reason"),
-  banExpires: timestamp("ban_expires"),
-  officeAddress: text("office_address"),
-  employeeId: text("employee_id"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .$onUpdate(() => /* @__PURE__ */ new Date())
-    .notNull(),
-});
+export const user = pgTable(
+  "user",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull().unique(),
+    emailVerified: boolean("email_verified").default(false).notNull(),
+    image: text("image"),
+    role: text("role"),
+    superAdmin: boolean("super_admin").default(false),
+    superAdminId: text("super_admin_id").default("Not Assigned"),
+    banned: boolean("banned"),
+    godownCode: varchar("godown_code")
+      .notNull()
+      .references(() => godowns.code, { onDelete: "restrict" }),
+    banReason: text("ban_reason"),
+    banExpires: timestamp("ban_expires"),
+    officeAddress: text("office_address"),
+    employeeId: text("employee_id"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [uniqueIndex("user_employee_id_uidx").on(table.employeeId)],
+);
 
 export const session = pgTable(
   "session",

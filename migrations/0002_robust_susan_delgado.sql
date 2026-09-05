@@ -1,0 +1,3 @@
+ALTER TABLE "stock_ledger" ALTER COLUMN "godown_code" DROP DEFAULT;--> statement-breakpoint
+ALTER TABLE "goods_outward" ADD CONSTRAINT "goods_outward_quantities_check" CHECK ("goods_outward"."net_weight_kg" >= 0 AND "goods_outward"."bag_count" >= 0);--> statement-breakpoint
+ALTER TABLE "stock_ledger" ADD CONSTRAINT "stock_ledger_quantities_check" CHECK ("stock_ledger"."current_bags" >= 0 AND "stock_ledger"."current_weight_kg" >= 0);
